@@ -9,6 +9,7 @@ public class ResultData {
 	private String msg;
 	@Getter
 	private Object data1;
+	
 
 	public static ResultData from(String resultCode, String msg) {
 		return from(resultCode, msg, null);

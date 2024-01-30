@@ -32,3 +32,17 @@ title = '제목3',
 
 SELECT *
 FROM article;
+
+
+# 멤버 
+CREATE TABLE `member`(
+    id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    regDate DATETIME NOT NULL,
+    updateDate DATETIME NOT NULL,
+    loginId CHAR(100) NOT NULL,
+    loginPw CHAR(200) NOT NULL,
+    `name` CHAR(100) NOT NULL,
+    nickname CHAR(100) NOT NULL,
+    chellphoneNum CHAR(15),
+    email CHAR(200)
+);

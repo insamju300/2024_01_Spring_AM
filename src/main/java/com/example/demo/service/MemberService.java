@@ -39,12 +39,17 @@ public class MemberService {
 		return memberRepository.getMemberByNameAndEmail(name, email);
 	}
 
-	private Member getMemberByLoginId(String loginId) {
+	public Member getMemberByLoginId(String loginId) {
 		return memberRepository.getMemberByLoginId(loginId);
 	}
 
 	public Member getMember(int id) {
 		return memberRepository.getMember(id);
+	}
+
+	public Member findMemberByLoginId(String loginId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -13,5 +13,8 @@ public class Article {
 	private String updateDate;
 	private String title;
 	private String body;
+	private int writer;
+	
+	private String extra__writer;
 
 }

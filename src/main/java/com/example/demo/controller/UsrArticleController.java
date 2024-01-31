@@ -62,35 +62,38 @@ public class UsrArticleController {
 		return ResultData.from(writeArticleRd.getResultCode(), writeArticleRd.getMsg(), article);
 	}
 
+
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
-	public Object doModify(int id, String title, String body) {
+	public ResultData doModify(int id, String title, String body) {
 		System.err.println("title : " + title);
 		System.err.println("body : " + body);
 		Article article = articleService.getArticle(id);
 
 		if (article == null) {
-			return id + "번 글은 존재하지 않습니다.";
+			return ResultData.from("F-1", Ut.f("%d번 게시물은 존재하지 않습니다", id));
 		}
 
 		articleService.modifyArticle(id, title, body);
+		Article findArticle = articleService.getArticle(id);
 
-		return article;
+		return ResultData.from("S-1", Ut.f("%d번 게시물이 수정되었습니다.", id), findArticle);
 	}
 
 	@RequestMapping("/usr/article/doDelete")
 	@ResponseBody
-	public String doDelete(int id) {
+	public ResultData doDelete(int id) {
 
 		Article article = articleService.getArticle(id);
 
 		if (article == null) {
-			return id + "번 글은 존재하지 않습니다.";
+			return ResultData.from("F-1", Ut.f("%d번 게시물은 존재하지 않습니다", id));
 		}
 
 		articleService.deleteArticle(id);
 
-		return id + "번 글이 삭제 되었습니다";
+		return ResultData.from("S-1", Ut.f("%d번 게시물이 삭제되었습니다.", id));
 	}
+
 
 }

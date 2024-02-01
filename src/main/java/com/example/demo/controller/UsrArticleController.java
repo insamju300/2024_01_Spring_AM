@@ -38,23 +38,15 @@ public class UsrArticleController {
 
 		return ResultData.from("S-1", Ut.f("%d번 게시물입니다.", id), "article", article);
 	}
-	
+
 	@RequestMapping("/usr/article/list")
-	public String getArticles(Model model) {
+	public String showList(Model model) {
 		List<Article> articles = articleService.getArticles();
-		model.addAttribute("resultData", ResultData.from("S-1", "Article List", "List<Article>", articles));
-		
-		
-		return "/usr/article/list";
+
+		model.addAttribute("articles", articles);
+
+		return "usr/article/list";
 	}
-
-
-//	@RequestMapping("/usr/article/getArticles")
-//	@ResponseBody
-//	public ResultData<List<Article>> getArticles() {
-//		List<Article> articles = articleService.getArticles();
-//		return ResultData.from("S-1", "Article List", "List<Article>", articles);
-//	}
 
 	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody

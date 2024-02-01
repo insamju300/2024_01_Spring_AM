@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <c:set var="pageTitle" value="ARTICLE DETAIL"></c:set>
 <%@ include file="../common/head.jspf"%>
 
@@ -9,27 +10,27 @@
 		<table class="table-box-1" border="1">
 			<tbody>
 				<tr>
-					<th>번호</th>
+					<th><spring:message code="article.id"/></th>
 					<td>${article.id }</td>
 				</tr>
 				<tr>
-					<th>작성날짜</th>
+					<th><spring:message code="article.regDate"/></th>
 					<td>${article.regDate }</td>
 				</tr>
 				<tr>
-					<th>수정날짜</th>
+					<th><spring:message code="article.updateDate"/></th>
 					<td>${article.updateDate }</td>
 				</tr>
 				<tr>
-					<th>작성자</th>
+					<th><spring:message code="article.extra__writer"/></th>
 					<td>${article.extra__writer }</td>
 				</tr>
 				<tr>
-					<th>제목</th>
+					<th><spring:message code="title"/></th>
 					<td>${article.title }</td>
 				</tr>
 				<tr>
-					<th>내용</th>
+					<th><spring:message code="body"/></th>
 					<td>${article.body }</td>
 				</tr>
 			</tbody>

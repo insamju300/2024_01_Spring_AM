@@ -10,12 +10,14 @@
 </head>
 <body>
 	<header>
-		<a href="/">LOGO</a>
+		<div class="container">
+			<a href="/">LOGO</a>
 
-		<ul>
-			<li><a href="/">HOME</a></li>
-			<li><a href="../article/list">LIST</a></li>
-		</ul>
+			<ul>
+				<li><a href="/">HOME</a></li>
+				<li><a href="../article/list">LIST</a></li>
+			</ul>
+		</div>
 	</header>
 	<h1>${pageTitle }</h1>
 	<hr />

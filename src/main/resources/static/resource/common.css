@@ -1,0 +1,95 @@
+@font-face {
+  font-family: "GmarketSansMedium";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html > body {
+  font-family: "GmarketSansMedium", sans;
+}
+
+/* 노말라이즈 */
+body,
+ul,
+li,
+h1 {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+label[for] {
+  cursor: pointer;
+  user-select: none;
+}
+
+header {
+  display: fixed;
+}
+
+/* 커스텀*/
+header > .container {
+  padding: 0 50px;
+  display: flex;
+  height: 50px;
+  align-items: center;
+  background-color: black;
+  justify-content: space-between;
+  color: white;
+}
+
+header > .container > a {
+  display: flex;
+  width: 150px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  transition: text-shadow 0.3s, font-size 0.3s;
+}
+
+.container > a:hover {
+  text-shadow: 1px 0px 10px white;
+  font-size: 1.1rem;
+}
+
+.container > ul {
+  display: flex;
+  height: 100%;
+}
+
+.container > ul > li {
+  width: 200px;
+}
+
+.container > ul > li > a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  transition: text-shadow 0.3s, font-size 0.3s;
+}
+
+.container > ul > li:hover > a {
+  text-shadow: 1px 0px 10px white;
+  font-size: 1.1rem;
+}
+
+@keyframes change-shadow {
+  50% {
+    text-shadow: 1px 1px 5px gray;
+  }
+}
+
+h1 {
+  animation-name: change-shadow;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}

@@ -15,6 +15,7 @@
 
 <!-- 제이쿼리 불러오기 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<c:set var="logindMemberId" value='<%=(Integer) session.getAttribute("loginedMemberId")%>' />
 </head>
 <body>
 	<header>
@@ -24,7 +25,15 @@
 			<ul class="flex">
 				<li><a class="hover:underline" href="/">HOME</a></li>
 				<li><a class="hover:underline" href="../article/list">LIST</a></li>
-				<li><a class="hover:underline" href="../member/login">LOGIN</a></li>
+				<c:choose>
+				<c:when test="${empty logindMemberId}">
+				    <li><a class="hover:underline" href="../member/join">JOIN</a></li>
+					<li><a class="hover:underline" href="../member/login">LOGIN</a></li>
+				</c:when>
+				<c:otherwise>
+				    <li><a class="hover:underline" href="../member/logout">LOGOUT</a></li>
+				</c:otherwise>
+				</c:choose>
 			</ul>
 		</div>
 	</header>

@@ -36,8 +36,13 @@
 		</table>
 		<div class="btns">
 			<button class="hover:underline" type="button" onclick="history.back();">뒤로가기</button>
-			<a href="../article/modify?id=${article.id }">수정</a>
-			<a href="../article/doDelete?id=${article.id }">삭제</a>
+			<c:if test="${article.userCanModify }">
+				<a href="../article/modify?id=${article.id }">수정</a>
+			</c:if>
+			<c:if test="${article.userCanDelete }">
+				<a onclick="if(confirm('정말 삭제하시겠습니까?') == false) return false;" href="../article/doDelete?id=${article.id }">삭제</a>
+			</c:if>
+
 		</div>
 	</div>
 </section>

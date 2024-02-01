@@ -14,16 +14,7 @@
 		DESC
 	</select>
 
-	<select id="getArticle" resultType="Article">
-		SELECT A.*, M.nickname AS
-		extra__writer
-		FROM article AS A
-		INNER JOIN `member` AS M
-		ON A.memberId =
-		M.id
-		WHERE A.id =
-		#{id}
-	</select>
+
 
 	<update id="modifyArticle">
 		UPDATE article

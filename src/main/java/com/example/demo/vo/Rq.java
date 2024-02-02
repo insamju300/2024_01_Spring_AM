@@ -17,5 +17,5 @@ public class Rq {
 			isLogined = true;
 			loginedMemberId = (int) httpSession.getAttribute("loginedMemberId");
 		}
-	}
+	}                                                                                                                                                                                      
 }

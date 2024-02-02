@@ -20,7 +20,7 @@ public class UsrMemberController {
 
 	@RequestMapping("/usr/member/doLogout")
 	@ResponseBody
-	public ResultData doLogout(HttpSession httpSession) {
+	public String doLogout(HttpSession httpSession) {
 
 		boolean isLogined = false;
 
@@ -29,17 +29,23 @@ public class UsrMemberController {
 		}
 
 		if (isLogined == false) {
-			return ResultData.from("F-A", "이미 로그아웃 상태입니다");
+			return Ut.jsHistoryBack("F-A", "이미 로그아웃 상태입니다");
 		}
 
 		httpSession.removeAttribute("loginedMemberId");
 
-		return ResultData.from("S-1", Ut.f("로그아웃 되었습니다"));
+		return  Ut.jsReplace("S-1", "로그아웃되었습니다.", "/");
+	}
+
+	@RequestMapping("/usr/member/login")
+	public String showLogin(HttpSession httpSession) {
+
+		return "usr/member/login";
 	}
 
 	@RequestMapping("/usr/member/doLogin")
 	@ResponseBody
-	public ResultData<Member> doLogin(HttpSession httpSession, String loginId, String loginPw) {
+	public String doLogin(HttpSession httpSession, String loginId, String loginPw) {
 
 		boolean isLogined = false;
 
@@ -48,29 +54,29 @@ public class UsrMemberController {
 		}
 
 		if (isLogined) {
-			return ResultData.from("F-A", "이미 로그인 상태입니다");
+			return Ut.jsHistoryBack("F-A", "이미 로그인 상태입니다");
 		}
 
 		if (Ut.isNullOrEmpty(loginId)) {
-			return ResultData.from("F-1", "아이디를 입력해주세요");
+			return Ut.jsHistoryBack("F-1", "아이디를 입력해주세요");
 		}
 		if (Ut.isNullOrEmpty(loginPw)) {
-			return ResultData.from("F-2", "비밀번호를 입력해주세요");
+			return Ut.jsHistoryBack("F-2", "비밀번호를 입력해주세요");
 		}
 
 		Member member = memberService.getMemberByLoginId(loginId);
 
 		if (member == null) {
-			return ResultData.from("F-3", Ut.f("%s(은)는 존재하지 않는 아이디입니다", loginId));
+			return Ut.jsHistoryBack("F-3", Ut.f("%s(은)는 존재하지 않는 아이디입니다", loginId));
 		}
 
 		if (member.getLoginPw().equals(loginPw) == false) {
-			return ResultData.from("F-4", Ut.f("비밀번호가 일치하지 않습니다"));
+			return Ut.jsHistoryBack("F-4", Ut.f("비밀번호가 일치하지 않습니다"));
 		}
 
 		httpSession.setAttribute("loginedMemberId", member.getId());
 
-		return ResultData.from("S-1", Ut.f("%s님 환영합니다", member.getNickname()));
+		return Ut.jsReplace("S-1", Ut.f("%s님 환영합니다", member.getNickname()), "/");
 	}
 
 	@RequestMapping("/usr/member/doJoin")

@@ -765,3 +765,39 @@ Caused by: java.lang.Error: Unresolved compilation problem:
 	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
 	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:199)
 	... 24 common frames omitted
+2024-02-02 13:29:58 [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field needLoginInterceptor in com.example.demo.MyWebMVCConfigurer required a bean of type 'com.example.demo.interceptor.NeedLoginInterceptor' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'com.example.demo.interceptor.NeedLoginInterceptor' in your configuration.
+
+2024-02-02 13:30:19 [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field needLoginInterceptor in com.example.demo.MyWebMVCConfigurer required a bean of type 'com.example.demo.interceptor.NeedLoginInterceptor' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'com.example.demo.interceptor.NeedLoginInterceptor' in your configuration.
+

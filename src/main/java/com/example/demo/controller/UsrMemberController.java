@@ -12,10 +12,12 @@ import com.example.demo.vo.ResultData;
 import com.example.demo.vo.Rq;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UsrMemberController {
+
+	@Autowired
+	private Rq rq;
 
 	@Autowired
 	private MemberService memberService;
@@ -25,23 +27,23 @@ public class UsrMemberController {
 	public String doLogout(HttpServletRequest req) {
 		Rq rq = (Rq) req.getAttribute("rq");
 
-//		if (!rq.isLogined()) {
-//			return Ut.jsHistoryBack("F-A", "이미 로그아웃 상태입니다");
-//		}
+		if (!rq.isLogined()) {
+			return Ut.jsHistoryBack("F-A", "이미 로그아웃 상태입니다");
+		}
 
 		rq.logout();
 
 		return Ut.jsReplace("S-1", "로그아웃 되었습니다", "/");
 	}
 
-	@RequestMapping("/usr/member/join")
-	public String showJoin(HttpSession httpSession) {
-
-		return "usr/member/join";
-	}
-	
 	@RequestMapping("/usr/member/login")
-	public String showLogin(HttpSession httpSession) {
+	public String showLogin(HttpServletRequest req) {
+
+		Rq rq = (Rq) req.getAttribute("rq");
+
+		if (rq.isLogined()) {
+			return Ut.jsHistoryBack("F-A", "이미 로그인 함");
+		}
 
 		return "usr/member/login";
 	}
@@ -78,20 +80,25 @@ public class UsrMemberController {
 		return Ut.jsReplace("S-1", Ut.f("%s님 환영합니다", member.getNickname()), "/");
 	}
 
+	@RequestMapping("/usr/member/join")
+	public String showJoin(HttpServletRequest req) {
 
+		Rq rq = (Rq) req.getAttribute("rq");
+
+		if (rq.isLogined()) {
+			return Ut.jsHistoryBack("F-A", "이미 로그인 함");
+		}
+
+		return "usr/member/join";
+	}
 
 	@RequestMapping("/usr/member/doJoin")
 	@ResponseBody
-	public String doJoin(HttpSession httpSession, String loginId, String loginPw, String name,
-			String nickname, String cellphoneNum, String email) {
-		boolean isLogined = false;
-
-		if (httpSession.getAttribute("loginedMemberId") != null) {
-			isLogined = true;
-		}
-
-		if (isLogined) {
-			return Ut.jsHistoryBack("F-A", Ut.f("이미 로그인 상태입니다"));
+	public String doJoin(HttpServletRequest req, String loginId, String loginPw, String name, String nickname,
+			String cellphoneNum, String email) {
+		Rq rq = (Rq) req.getAttribute("rq");
+		if (rq.isLogined()) {
+			return Ut.jsHistoryBack("F-A", "이미 로그인 상태입니다");
 		}
 
 		if (Ut.isNullOrEmpty(loginId)) {
@@ -108,6 +115,7 @@ public class UsrMemberController {
 		}
 		if (Ut.isNullOrEmpty(cellphoneNum)) {
 			return Ut.jsHistoryBack("F-5", "전화번호를 입력해주세요");
+
 		}
 		if (Ut.isNullOrEmpty(email)) {
 			return Ut.jsHistoryBack("F-6", "이메일을 입력해주세요");
@@ -121,6 +129,6 @@ public class UsrMemberController {
 
 		Member member = memberService.getMember(joinRd.getData1());
 
-		return Ut.jsReplace("S-1", Ut.f("%s님 가입 환영합니다!", member.getNickname()), "../member/login");
+		return Ut.jsReplace("S-1", joinRd.getMsg(), "../member/login");
 	}
 }

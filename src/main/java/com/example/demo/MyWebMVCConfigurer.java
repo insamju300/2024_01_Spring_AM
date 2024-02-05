@@ -18,6 +18,9 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 	// NeedLoginInterceptor 불러오기(연결)
 	@Autowired
 	NeedLoginInterceptor needLoginInterceptor;
+	
+	@Autowired
+	NeedLoginInterceptor needLogoutInterceptor;
 
 	// 인터셉터 등록(적용)
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -28,6 +31,8 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 				.addPathPatterns("/usr/article/doWrite").addPathPatterns("/usr/article/modify")
 				.addPathPatterns("/usr/article/doModify").addPathPatterns("/usr/article/doDelete")
 				.addPathPatterns("/usr/member/doLogout");
+		
+		registry.addInterceptor(needLogoutInterceptor).addPathPatterns("/usr/member/join").addPathPatterns("/usr/member/login");
 	}
 
 }

@@ -10,6 +10,9 @@
 <!-- 테일윈드 불러오기 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
 
+<!-- daisy ui 불러오기 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/4.6.1/full.css" />
+
 <!-- 폰트어썸 불러오기 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 
@@ -23,12 +26,18 @@
 			<div class="flex-grow"></div>
 			<ul class="flex">
 				<li><a class="hover:underline" href="/">HOME</a></li>
-				<li><a class="hover:underline" href="../article/list">LIST</a></li>
+				<li><a class="hover:underline" href="../article/list">LIST</a>
+					<ul>
+						<li><a class="hover:underline" href="../article/list?boardId=1">NOTICE</a></li>
+						<li><a class="hover:underline" href="../article/list?boardId=2">FREE</a></li>
+						<li><a class="hover:underline" href="../article/list?boardId=3">QnA</a></li>
+					</ul></li>
 				<c:if test="${!rq.isLogined() }">
 					<li><a class="hover:underline" href="../member/login">LOGIN</a></li>
 					<li><a class="hover:underline" href="../member/join">JOIN</a></li>
 				</c:if>
 				<c:if test="${rq.isLogined() }">
+					<li><a class="hover:underline" href="../article/write">WRITE</a></li>
 					<li><a onclick="if(confirm('로그아웃 할래?') == false) return false;" class="hover:underline"
 							href="../member/doLogout">LOGOUT</a></li>
 				</c:if>

@@ -47,21 +47,34 @@ header>div>ul>li {
 	margin-right: 30px;
 }
 
-.login-box>tbody>tr>td>input {
-	border: 1px solid black;
-	padding-left: 10px;
-}
+/* .login-box>tbody>tr>td>input { */
+/* 	padding-left: 10px; */
+/* } */
 
-.login-box>tbody>tr:nth-child(3)>td>input {
-	padding-left: 0;
-}
+/* .login-box>tbody>tr:nth-child(3)>td>input { */
+/* 	padding-left: 0; */
+/* } */
 
-.join-box>tbody>tr:nth-child(7)>td>input  {
-	padding-left: 0;
-}
+/* .join-box>tbody>tr:nth-child(7)>td>input { */
+/* 	padding-left: 0; */
+/* } */
 
+/* .modify-box>tbody>tr:nth-child(5)>td>input, .modify-box>tbody>tr:nth-child(6)>td>input, */
+/* 	.modify-box>tbody>tr:nth-child(7)>td>input { */
+/* } */
 .table-box-1 th, .table-box-1 td {
 	border: 1px solid black;
 	padding: 10px;
 	text-align: center;
+}
+
+/*네비게이션 2차메뉴 */
+header>div>ul>li>ul {
+	display: none;
+	position: absolute;
+	background-color: white;
+}
+
+header>div>ul>li:hover>ul {
+	display: block;
 }

@@ -1,73 +1,63 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<c:set var="pageTitle" value="ARTICLE LIST"></c:set>
+<c:set var="pageTitle" value="ARTICLE MODIFY"></c:set>
 <%@ include file="../common/head.jspf"%>
 
 
-<div class="fromBox w-full py-20 flex justify-center ">
-	<form class="p-10 w-full max-w-sm rounded border border-pink-300 shadow-lg" action="../article/doModify" method="post">
-	<input type="hidden" value="${article.id}" name="id"> 
-		<div class="md:flex md:items-center mb-6 ">
-			<div class="md:w-1/3">
-				<label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="title"> 타이틀 </label>
-			</div>
-			<div class="md:w-2/3">
-				<input
-					class="bg-pink-100 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-pink-400 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
-					id="title" name="title" type="text" placeholder="타이틀" autocomplete='off' value="${article.title }">
-			</div>
+<section class="mt-8 text-xl px-4">
+	<div class="mx-auto">
+		<form action="../article/doModify" method="POST">
+			<input type="hidden" name="id" value="${article.id }" />
+			<table class="modify-box table-box-1" border="1">
+				<tbody>
+					<tr>
+						<th>번호</th>
+						<td>${article.id }</td>
+					</tr>
+					<tr>
+						<th>작성날짜</th>
+						<td>${article.regDate }</td>
+					</tr>
+					<tr>
+						<th>수정날짜</th>
+						<td>${article.updateDate }</td>
+					</tr>
+					<tr>
+						<th>작성자</th>
+						<td>${article.extra__writer }</td>
+					</tr>
+					<tr>
+						<th>제목</th>
+						<td><input class="input input-bordered input-primary w-full max-w-xs" autocomplete="off" type="text"
+							placeholder="제목을 입력해주세요" name="title" value="${article.title }" /></td>
+					</tr>
+					<tr>
+						<th>내용</th>
+						<td><input class="input input-bordered input-primary w-full max-w-xs" autocomplete="off" type="text"
+							placeholder="내용을 입력해주세요" name="body" value="${article.body }" /></td>
+					</tr>
+					<tr>
+						<th></th>
+						<td><input class="btn btn-info" type="submit" value="수정" /></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+		<div class="btns">
+			<button class="btn btn-outline" type="button" onclick="history.back();">뒤로가기</button>
+			<c:if test="${article.userCanModify }">
+				<a class="btn btn-outline" href="../article/modify?id=${article.id }">수정</a>
+			</c:if>
+			<c:if test="${article.userCanDelete }">
+				<a class="btn btn-outline" onclick="if(confirm('정말 삭제하시겠습니까?') == false) return false;"
+					href="../article/doDelete?id=${article.id }">삭제</a>
+			</c:if>
+
 		</div>
 
-		<div class="md:flex md:items-center mb-6 ">
-			<div class="md:w-1/3">
-				<label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"> 번호 </label>
-			</div>
-			<div class="md:w-2/3 text-gray-500 ">
-				<p>${article.id }</p>
-			</div>
-		</div>
-		<div class="md:flex md:items-center mb-6 ">
-			<div class="md:w-1/3">
-				<label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"> 작성일 </label>
-			</div>
-			<div class="md:w-2/3 text-gray-500 ">
-				<p>${article.regDate }</p>
-			</div>
-		</div>
-		<div class="md:flex md:items-center mb-6 ">
-			<div class="md:w-1/3">
-				<label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"> 수정일 </label>
-			</div>
-			<div class="md:w-2/3 text-gray-500 ">
-				<p>${article.updateDate }</p>
-			</div>
-		</div>
+	</div>
+</section>
 
-		<div class="md:flex md:items-center mb-6 ">
-			<div class="md:w-1/3">
-				<label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"> 작성자 </label>
-			</div>
-			<div class="md:w-2/3 text-gray-500 ">
-				<p>${article.extra__writer }</p>
-			</div>
-		</div>
-
-		<div class="md:flex md:items-center mb-6">
-			<div class="md:w-full">
-
-				<textarea
-					class="bg-pink-100 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-pink-400 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
-					rows="15" id="body" name="body" autocomplete='off'>${article.body }</textarea>
-			</div>
-		</div>
-
-		<div class="flex items-center justify-center">
-			<button
-				class="shadow bg-pink-200 text-pink-700 hover:bg-pink-700 hover:text-white focus:shadow-outline focus:outline-none font-bold py-2 px-4 rounded duration-100 ">
-				수정</button>
-		</div>
-	</form>
-</div>
 
 
 <%@ include file="../common/foot.jspf"%>

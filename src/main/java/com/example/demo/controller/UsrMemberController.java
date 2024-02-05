@@ -83,12 +83,6 @@ public class UsrMemberController {
 	@RequestMapping("/usr/member/join")
 	public String showJoin(HttpServletRequest req) {
 
-		Rq rq = (Rq) req.getAttribute("rq");
-
-		if (rq.isLogined()) {
-			return Ut.jsHistoryBack("F-A", "이미 로그인 함");
-		}
-
 		return "usr/member/join";
 	}
 
@@ -129,6 +123,6 @@ public class UsrMemberController {
 
 		Member member = memberService.getMember(joinRd.getData1());
 
-		return Ut.jsReplace("S-1", joinRd.getMsg(), "../member/login");
+		return Ut.jsReplace(joinRd.getResultCode(), joinRd.getMsg(), "../member/login");
 	}
 }

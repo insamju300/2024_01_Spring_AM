@@ -34,6 +34,12 @@ public class UsrMemberController {
 		return Ut.jsReplace("S-1", "로그아웃 되었습니다", "/");
 	}
 
+	@RequestMapping("/usr/member/join")
+	public String showJoin(HttpSession httpSession) {
+
+		return "usr/member/join";
+	}
+	
 	@RequestMapping("/usr/member/login")
 	public String showLogin(HttpSession httpSession) {
 
@@ -72,42 +78,49 @@ public class UsrMemberController {
 		return Ut.jsReplace("S-1", Ut.f("%s님 환영합니다", member.getNickname()), "/");
 	}
 
+
+
 	@RequestMapping("/usr/member/doJoin")
 	@ResponseBody
-	public ResultData<Member> doJoin(HttpServletRequest req, String loginId, String loginPw, String name,
+	public String doJoin(HttpSession httpSession, String loginId, String loginPw, String name,
 			String nickname, String cellphoneNum, String email) {
-		Rq rq = (Rq) req.getAttribute("rq");
-		if (rq.isLogined()) {
-			return ResultData.from("F-A", "이미 로그인 상태입니다");
+		boolean isLogined = false;
+
+		if (httpSession.getAttribute("loginedMemberId") != null) {
+			isLogined = true;
+		}
+
+		if (isLogined) {
+			return Ut.jsHistoryBack("F-A", Ut.f("이미 로그인 상태입니다"));
 		}
 
 		if (Ut.isNullOrEmpty(loginId)) {
-			return ResultData.from("F-1", "아이디를 입력해주세요");
+			return Ut.jsHistoryBack("F-1", "아이디를 입력해주세요");
 		}
 		if (Ut.isNullOrEmpty(loginPw)) {
-			return ResultData.from("F-2", "비밀번호를 입력해주세요");
+			return Ut.jsHistoryBack("F-2", "비밀번호를 입력해주세요");
 		}
 		if (Ut.isNullOrEmpty(name)) {
-			return ResultData.from("F-3", "이름을 입력해주세요");
+			return Ut.jsHistoryBack("F-3", "이름을 입력해주세요");
 		}
 		if (Ut.isNullOrEmpty(nickname)) {
-			return ResultData.from("F-4", "닉네임을 입력해주세요");
+			return Ut.jsHistoryBack("F-4", "닉네임을 입력해주세요");
 		}
 		if (Ut.isNullOrEmpty(cellphoneNum)) {
-			return ResultData.from("F-5", "전화번호를 입력해주세요");
+			return Ut.jsHistoryBack("F-5", "전화번호를 입력해주세요");
 		}
 		if (Ut.isNullOrEmpty(email)) {
-			return ResultData.from("F-6", "이메일을 입력해주세요");
+			return Ut.jsHistoryBack("F-6", "이메일을 입력해주세요");
 		}
 
 		ResultData<Integer> joinRd = memberService.join(loginId, loginPw, name, nickname, cellphoneNum, email);
 
 		if (joinRd.isFail()) {
-			return (ResultData) joinRd;
+			return Ut.jsHistoryBack(joinRd.getResultCode(), joinRd.getMsg());
 		}
 
 		Member member = memberService.getMember(joinRd.getData1());
 
-		return ResultData.newData(joinRd, "member", member);
+		return Ut.jsReplace("S-1", Ut.f("%s님 가입 환영합니다!", member.getNickname()), "../member/login");
 	}
 }

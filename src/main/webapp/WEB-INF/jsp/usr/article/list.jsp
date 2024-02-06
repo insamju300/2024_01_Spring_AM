@@ -38,13 +38,13 @@
 	<div class="pagination flex justify-center mt-3">
 		<div class="btn-group">
 			<c:if test="${pagenation.startPage > 1 }">
-				<a class="btn btn-sm" href="?boardId=${param.boardId }&page=1"> ◀◀ </a>
+				<a class="btn btn-sm" href="?boardId=${param.boardId }&page=1&search=${param.search }&searchType=${param.searchType }"> ◀◀ </a>
 			</c:if>
 			<c:forEach begin="${pagenation.startPage }" end="${pagenation.endPage }" var="i">
-				<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }" href="?boardId=${param.boardId }&page=${i }">${i }</a>
+				<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }" href="?boardId=${param.boardId }&page=${i }&search=${param.search }&searchType=${param.searchType }">${i }</a>
 			</c:forEach>
 			<c:if test="${pagenation.endPage < pagenation.totalPage }">
-				<a class="btn btn-sm" href="?boardId=${param.boardId }&page=${ pagenation.totalPage}"> ▶▶ </a>
+				<a class="btn btn-sm" href="?boardId=${param.boardId }&page=${ pagenation.totalPage}&search=${param.search }&searchType=${param.searchType }"> ▶▶ </a>
 			</c:if>
 		</div>
 	</div>
@@ -54,24 +54,33 @@
 	<div class="join">
 		<div>
 			<div>
-				<input id="search" class="input input-bordered join-item" placeholder="Search" />
+				<select id="searchType" class="select select-bordered join-item">
+					<option value="1" selected>제목</option>
+					<option value="2">내용</option>
+					<option value="3">작성자</option>
+				</select>
+				 <input id="search" class="input input-bordered join-item" placeholder="Search" />
+
 			</div>
+
 		</div>
 		<div class="indicator">
-			<button class="btn join-item" onclick="hrefForSearch()">Search</button>
+			<button class="btn join-item btn-outline" onclick="hrefForSearch()">Search</button>
 		</div>
 	</div>
 </section>
 
 
 <script>
-function hrefForSearch(){
-	var searchKeyword = document.getElementById('search').value;
-	var boardId ="${param.boardId }";
-	var page ="${pagenation.currentPage }";
-	//alert(searchKeyword + ", " + boardId+","+page);
-	window.location.assign("?search="+searchKeyword+"&boardId="+boardId+"&page="+page);
-}
+	function hrefForSearch() {
+		var searchKeyword = document.getElementById('search').value;
+		var boardId = "${param.boardId }";
+		var page = "${pagenation.currentPage }";
+		var searchType = document.getElementById('searchType').value;
+		//alert(searchKeyword + ", " + boardId+","+page);
+		window.location.assign("?search=" + searchKeyword + "&boardId="
+				+ boardId + "&searchType=" + searchType);
+	}
 </script>
 
 

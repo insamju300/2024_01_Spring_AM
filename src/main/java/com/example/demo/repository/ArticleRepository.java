@@ -82,19 +82,30 @@ public interface ArticleRepository {
 
 	@Select("""
 			<script>
-			SELECT COUNT(*) AS cnt
-			FROM article
+			SELECT COUNT(1) AS cnt
+			FROM article A
+			INNER JOIN `member` AS M
+			ON A.memberId = M.id
 			WHERE 1
 			<if test="boardId != 0">
 				AND boardId = #{boardId}
 			</if>
 			<if test="search!=null and !search.equals('')">
-				AND title like CONCAT('%', #{search}, '%')
+			    <choose>
+				    <when test="searchType==1">
+					    AND title like CONCAT('%', #{search}, '%')
+					</when>
+				    <when test="searchType==2">
+					    AND `body` like CONCAT('%', #{search}, '%')
+					</when>
+				    <when test="searchType==3">
+					    AND M.nickname like CONCAT('%', #{search}, '%')
+					</when>
+				</choose>
 			</if>
-			ORDER BY id DESC
 			</script>
 			""")
-	public int getArticlesCount(int boardId, String search);
+	public int getArticlesCount(int boardId, String search, int searchType);
 
 	@Select("""
 			<script>
@@ -107,7 +118,17 @@ public interface ArticleRepository {
 				AND A.boardId = #{boardId}
 			</if>
 			<if test="search!=null and !search.equals('')">
-				AND title like CONCAT('%', #{search}, '%')
+			    <choose>
+				    <when test="searchType==1">
+					    AND title like CONCAT('%', #{search}, '%')
+					</when>
+				    <when test="searchType==2">
+					    AND `body` like CONCAT('%', #{search}, '%')
+					</when>
+				    <when test="searchType==3">
+					    AND M.nickname like CONCAT('%', #{search}, '%')
+					</when>
+				</choose>
 			</if>
 			ORDER BY A.id DESC
 			<if test="limitFrom >= 0 ">
@@ -115,6 +136,6 @@ public interface ArticleRepository {
 			</if>
 			</script>
 			""")
-	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String search);
+	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String search , int searchType);
 
 }

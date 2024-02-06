@@ -40,7 +40,7 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/list")
 	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId,
-			@RequestParam(defaultValue = "1") int page, String search) {
+			@RequestParam(defaultValue = "1") int page, String search, @RequestParam(defaultValue = "1") int searchType) {
 		if(search!=null) {
 			search=search.trim();
 		}
@@ -48,8 +48,10 @@ public class UsrArticleController {
 		Rq rq = (Rq) req.getAttribute("rq");
 
 		Board board = boardService.getBoardById(boardId);
+		
+		System.err.println("searchType" + ":" +searchType);
 
-		int articlesCount = articleService.getArticlesCount(boardId, search);
+		int articlesCount = articleService.getArticlesCount(boardId, search, searchType);
 		
 		Pagenation pagenation = new Pagenation(10, 10, page, articlesCount);
 
@@ -59,7 +61,7 @@ public class UsrArticleController {
 
 		int itemsInAPage = 10;
 
-		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page, search);
+		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page, search, searchType);
 
 		model.addAttribute("pagenation", pagenation);
 		model.addAttribute("board", board);

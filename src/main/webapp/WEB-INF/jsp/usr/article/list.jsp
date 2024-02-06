@@ -41,28 +41,31 @@
 	<div class="pagination flex justify-center mt-3">
 		<div class="btn-group">
 			<c:if test="${pagenation.startPage > 1 }">
-				<a class="btn btn-sm" href="?boardId=${param.boardId }&page=1&search=${param.search }&searchType=${param.searchType }"> ◀◀ </a>
+				<a class="btn btn-sm"
+					href="?boardId=${param.boardId }&page=1&search=${param.search }&searchType=${param.searchType }"> ◀◀ </a>
 			</c:if>
 			<c:forEach begin="${pagenation.startPage }" end="${pagenation.endPage }" var="i">
-				<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }" href="?boardId=${param.boardId }&page=${i }&search=${param.search }&searchType=${param.searchType }">${i }</a>
+				<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }"
+					href="?boardId=${param.boardId }&page=${i }&search=${param.search }&searchType=${param.searchType }">${i }</a>
 			</c:forEach>
 			<c:if test="${pagenation.endPage < pagenation.totalPage }">
-				<a class="btn btn-sm" href="?boardId=${param.boardId }&page=${ pagenation.totalPage}&search=${param.search }&searchType=${param.searchType }"> ▶▶ </a>
+				<a class="btn btn-sm"
+					href="?boardId=${param.boardId }&page=${ pagenation.totalPage}&search=${param.search }&searchType=${param.searchType }">
+					▶▶ </a>
 			</c:if>
 		</div>
 	</div>
 
 
 
-	<div class="join">
+	<div class="join w-full flex justify-center mt-5">
 		<div>
 			<div>
 				<select id="searchType" class="select select-bordered join-item">
 					<option value="1" selected>제목</option>
 					<option value="2">내용</option>
 					<option value="3">작성자</option>
-				</select>
-				 <input id="search" class="input input-bordered join-item" placeholder="Search" />
+				</select> <input id="search" onkeyup="enterkey()" class="input input-bordered join-item" placeholder="Search" />
 
 			</div>
 
@@ -75,6 +78,12 @@
 
 
 <script>
+	function enterkey() {
+		if (window.event.keyCode == 13) {
+			hrefForSearch();
+		}
+	}
+
 	function hrefForSearch() {
 		var searchKeyword = document.getElementById('search').value;
 		var boardId = "${param.boardId }";

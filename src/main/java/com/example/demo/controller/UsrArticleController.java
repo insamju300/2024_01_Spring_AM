@@ -40,24 +40,27 @@ public class UsrArticleController {
 	// 액션 메서드
 
 	@RequestMapping("/usr/article/list")
-	public String showList(HttpServletRequest req, Model model, Integer boardId, @RequestParam(value="currentPage", defaultValue="1") 
-			int currentPage)
+	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue="0") Integer boardId, @RequestParam(defaultValue="1") 
+	    Integer currentPage)
 			throws IOException {
 
 		Rq rq = (Rq) req.getAttribute("rq");
-		if (boardId == null) {
-			model.addAttribute("msg", "boardId값을 입력해주세요.");
-			return "usr/err/historyBack";
-		}
+//		if (boardId == null) {
+//			model.addAttribute("msg", "boardId값을 입력해주세요.");
+//			return "usr/err/historyBack";
+//		}
+		
 
 		Pagenation pagenation = articleService.getPageNation(currentPage, boardId);
 
 		Board board = boardService.getBoardById(boardId);
+		System.err.println(boardId);
+		System.err.println(pagenation.getTotalItem());
 		
 		List<Article> articles = articleService.getForPrintArticles(boardId, pagenation);
 
-		if (board == null) {
-			model.addAttribute("msg", "boardId값을 입력해주세요.");
+		if (board == null && boardId!=0) {
+			model.addAttribute("msg", "해당 게시판이 존재하지 않습니다..");
 			return "usr/err/historyBack";
 		}
 

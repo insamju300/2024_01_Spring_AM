@@ -67,17 +67,28 @@ public interface ArticleRepository {
 	public List<Article> getArticles();
 
 	@Select("""
-			SELECT A.*, M.nickname AS extra__writer
-			FROM article AS A
-			INNER JOIN `member` AS M
-			ON A.memberId = M.id
-			WHERE boardId = #{boardId}
-			ORDER BY A.id DESC
-			LIMIT #{pagenation.firstItemIndex}, #{pagenation.itemsPerPage}
+			<script>
+				SELECT A.*, M.nickname AS extra__writer
+				FROM article AS A
+				INNER JOIN `member` AS M
+				ON A.memberId = M.id
+				<if test='boardId != 0'>
+				    WHERE boardId = #{boardId}
+				</if>
+				ORDER BY A.id DESC
+				LIMIT #{pagenation.firstItemIndex}, #{pagenation.itemsPerPage}
+			</script>
 			""")
 	public List<Article> getForPrintArticles(int boardId, Pagenation pagenation);
 
-	@Select("SELECT COUNT(1) FROM ARTICLE WHERE boardID = ${boardId}")
+	@Select("""
+			<script>
+				SELECT COUNT(1) FROM ARTICLE
+				<if test='boardId != 0'>
+				    WHERE boardID = #{boardId}
+				</if>
+			</script>
+			""")
 	public int getTotalCountForBoardId(Integer boardId);
 
 }

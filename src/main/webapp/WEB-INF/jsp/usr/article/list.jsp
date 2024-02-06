@@ -35,10 +35,9 @@
 		</table>
 	</div>
 </section>
-
 <div class="join w-full flex  justify-center">
 
-	<c:if test="${pagenation.currentPage > 1 }">
+	<c:if test="${pagenation.startPage > 1 }">
 		<button class="join-item btn btn-md" onclick="location.href='/usr/article/list?currentPage=${pagenation.startPage-1 }&boardId=${board.id }'">◀</button>
 	</c:if>
 	<c:forEach var="pageIndex" begin="${pagenation.startPage }" end="${pagenation.endPage}">
@@ -56,6 +55,7 @@
 		<button onclick="location.href='/usr/article/list?currentPage=${pagenation.endPage+1 }&boardId=${board.id }'" class="join-item btn btn-md">▶</button>
 	</c:if>
 </div>
+
 
 
 <%@ include file="../common/foot.jspf"%>

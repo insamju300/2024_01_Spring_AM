@@ -31,7 +31,7 @@ public class Pagenation {
 		if(this.endPage>this.totalPage) {
 			this.endPage = this.totalPage;
 		}
-		this.firstItemIndex = (currentPage-1)*itemsPerPage+1;
+		this.firstItemIndex = (currentPage-1)*itemsPerPage;
 	}
 	
 }

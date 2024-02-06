@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.example.demo.vo.Article;
+import com.example.demo.vo.Pagenation;
 
 @Mapper
 public interface ArticleRepository {
@@ -72,7 +73,11 @@ public interface ArticleRepository {
 			ON A.memberId = M.id
 			WHERE boardId = #{boardId}
 			ORDER BY A.id DESC
+			LIMIT #{pagenation.firstItemIndex}, #{pagenation.itemsPerPage}
 			""")
-	public List<Article> getForPrintArticles(int boardId);
+	public List<Article> getForPrintArticles(int boardId, Pagenation pagenation);
+
+	@Select("SELECT COUNT(1) FROM ARTICLE WHERE boardID = ${boardId}")
+	public int getTotalCountForBoardId(Integer boardId);
 
 }

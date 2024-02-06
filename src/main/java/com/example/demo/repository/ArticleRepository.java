@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.example.demo.vo.Article;
-import com.example.demo.vo.Pagenation;
 
 @Mapper
 public interface ArticleRepository {
@@ -66,29 +65,56 @@ public interface ArticleRepository {
 			""")
 	public List<Article> getArticles();
 
-	@Select("""
-			<script>
-				SELECT A.*, M.nickname AS extra__writer
-				FROM article AS A
-				INNER JOIN `member` AS M
-				ON A.memberId = M.id
-				<if test='boardId != 0'>
-				    WHERE boardId = #{boardId}
-				</if>
-				ORDER BY A.id DESC
-				LIMIT #{pagenation.firstItemIndex}, #{pagenation.itemsPerPage}
-			</script>
-			""")
-	public List<Article> getForPrintArticles(int boardId, Pagenation pagenation);
+//	@Select("""
+//			<script>
+//			SELECT A.*, M.nickname AS extra__writer
+//			FROM article AS A
+//			INNER JOIN `member` AS M
+//			ON A.memberId = M.id
+//			WHERE 1
+//			<if test="boardId != 0">
+//				AND A.boardId = #{boardId}
+//			</if>
+//			ORDER BY A.id DESC
+//			</script>
+//			""")
+//	public List<Article> getForPrintArticles(int boardId);
 
 	@Select("""
 			<script>
-				SELECT COUNT(1) FROM ARTICLE
-				<if test='boardId != 0'>
-				    WHERE boardID = #{boardId}
-				</if>
+			SELECT COUNT(*) AS cnt
+			FROM article
+			WHERE 1
+			<if test="boardId != 0">
+				AND boardId = #{boardId}
+			</if>
+			<if test="search!=null and !search.equals('')">
+				AND title like CONCAT('%', #{search}, '%')
+			</if>
+			ORDER BY id DESC
 			</script>
 			""")
-	public int getTotalCountForBoardId(Integer boardId);
+	public int getArticlesCount(int boardId, String search);
+
+	@Select("""
+			<script>
+			SELECT A.*, M.nickname AS extra__writer
+			FROM article AS A
+			INNER JOIN `member` AS M
+			ON A.memberId = M.id
+			WHERE 1
+			<if test="boardId != 0">
+				AND A.boardId = #{boardId}
+			</if>
+			<if test="search!=null and !search.equals('')">
+				AND title like CONCAT('%', #{search}, '%')
+			</if>
+			ORDER BY A.id DESC
+			<if test="limitFrom >= 0 ">
+				LIMIT #{limitFrom}, #{limitTake}
+			</if>
+			</script>
+			""")
+	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String search);
 
 }

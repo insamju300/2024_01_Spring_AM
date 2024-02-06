@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,33 +39,32 @@ public class UsrArticleController {
 	// 액션 메서드
 
 	@RequestMapping("/usr/article/list")
-	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue="0") Integer boardId, @RequestParam(defaultValue="1") 
-	    Integer currentPage)
-			throws IOException {
-
-		Rq rq = (Rq) req.getAttribute("rq");
-//		if (boardId == null) {
-//			model.addAttribute("msg", "boardId값을 입력해주세요.");
-//			return "usr/err/historyBack";
-//		}
-		
-
-		Pagenation pagenation = articleService.getPageNation(currentPage, boardId);
-
-		Board board = boardService.getBoardById(boardId);
-		System.err.println(boardId);
-		System.err.println(pagenation.getTotalItem());
-		
-		List<Article> articles = articleService.getForPrintArticles(boardId, pagenation);
-
-		if (board == null && boardId!=0) {
-			model.addAttribute("msg", "해당 게시판이 존재하지 않습니다..");
-			return "usr/err/historyBack";
+	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId,
+			@RequestParam(defaultValue = "1") int page, String search) {
+		if(search!=null) {
+			search=search.trim();
 		}
 
-		model.addAttribute("board", board);
-		model.addAttribute("articles", articles);
+		Rq rq = (Rq) req.getAttribute("rq");
+
+		Board board = boardService.getBoardById(boardId);
+
+		int articlesCount = articleService.getArticlesCount(boardId, search);
+		
+		Pagenation pagenation = new Pagenation(10, 10, page, articlesCount);
+
+		if (board == null) {
+			return rq.historyBackOnView("없는 게시판이야");
+		}
+
+		int itemsInAPage = 10;
+
+		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page, search);
+
 		model.addAttribute("pagenation", pagenation);
+		model.addAttribute("board", board);
+		//model.addAttribute("articlesCount", articlesCount);
+		model.addAttribute("articles", articles);
 
 		return "usr/article/list";
 	}

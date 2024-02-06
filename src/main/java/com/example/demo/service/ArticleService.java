@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.example.demo.repository.ArticleRepository;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
-import com.example.demo.vo.Pagenation;
 import com.example.demo.vo.ResultData;
 
 @Service
@@ -83,16 +82,23 @@ public class ArticleService {
 		return articleRepository.getArticles();
 	}
 
-	public List<Article> getForPrintArticles(int boardId, Pagenation pagenation) {
-		return articleRepository.getForPrintArticles(boardId, pagenation);
+	public int getArticlesCount(int boardId, String search) {
+		return articleRepository.getArticlesCount(boardId, search);
 	}
+//
+//	public List<Article> getForPrintArticles(int boardId) {
+//		return articleRepository.getForPrintArticles(boardId);
+//	}
 
-	public Pagenation getPageNation(Integer currentPage, Integer boardId) {
-		int itemsPerPage = 10;
-		int pagesInBlock = 10;
-		int totalItem =  articleRepository.getTotalCountForBoardId(boardId);
-		
-		return new Pagenation(itemsPerPage, pagesInBlock, currentPage, totalItem);
+	public List<Article> getForPrintArticles(int boardId, int itemsInAPage, int page, String search) {
+
+//		SELECT * FROM article WHERE boardId = 1 ORDER BY id DESC LIMIT 0, 10; 1page
+//		SELECT * FROM article WHERE boardId = 1 ORDER BY id DESC LIMIT 10, 10; 2page
+
+		int limitFrom = (page - 1) * itemsInAPage;
+		int limitTake = itemsInAPage;
+
+		return articleRepository.getForPrintArticles(boardId, limitFrom, limitTake, search);
 	}
 
 }

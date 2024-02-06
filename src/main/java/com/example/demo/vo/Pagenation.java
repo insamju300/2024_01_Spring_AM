@@ -22,15 +22,32 @@ public class Pagenation {
 		this.currentPage = currentPage;
 		this.totalItem = totalItem;
         this.totalPage = (int) (Math.ceil(totalItem/(double)itemsPerPage));
-		this.preBlockLastPage= ((currentPage-1)/pagesInBlock)*pagesInBlock;
-		this.startPage = preBlockLastPage +1;
-		if(startPage<1) {
-			startPage=1;
-		}
-		this.endPage = startPage+pagesInBlock-1;
-		if(this.endPage>this.totalPage) {
-			this.endPage = this.totalPage;
-		}
+        
+        this.startPage = currentPage - (pagesInBlock/2);
+        if(startPage<1) {
+        	startPage = 1;
+        }
+        
+        this.endPage = startPage + (pagesInBlock-1);
+        
+        if(endPage> totalPage) {
+        	endPage = totalPage;
+        	
+        	if(!(endPage-(pagesInBlock-1) < 1 )) {
+        		startPage=endPage - (pagesInBlock-1);
+        	}
+        }
+        
+        
+//		this.preBlockLastPage= ((currentPage-1)/pagesInBlock)*pagesInBlock;
+//		this.startPage = preBlockLastPage +1;
+//		if(startPage<1) {
+//			startPage=1;
+//		}
+//		this.endPage = startPage+pagesInBlock-1;
+//		if(this.endPage>this.totalPage) {
+//			this.endPage = this.totalPage;
+//		}
 		this.firstItemIndex = (currentPage-1)*itemsPerPage;
 	}
 	

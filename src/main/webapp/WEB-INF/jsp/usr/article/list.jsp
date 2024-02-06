@@ -6,6 +6,7 @@
 
 <section class="mt-8 text-xl px-4">
 	<div class="mx-auto overflow-x-auto">
+		<div class="badge badge-outline">${pagenation.totalItem }개</div>
 		<table class="table-box-1 table" border="1">
 			<colgroup>
 				<col style="width: 10%" />
@@ -34,28 +35,44 @@
 			</tbody>
 		</table>
 	</div>
+	<div class="pagination flex justify-center mt-3">
+		<div class="btn-group">
+			<c:if test="${pagenation.startPage > 1 }">
+				<a class="btn btn-sm" href="?boardId=${param.boardId }&page=1"> ◀◀ </a>
+			</c:if>
+			<c:forEach begin="${pagenation.startPage }" end="${pagenation.endPage }" var="i">
+				<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }" href="?boardId=${param.boardId }&page=${i }">${i }</a>
+			</c:forEach>
+			<c:if test="${pagenation.endPage < pagenation.totalPage }">
+				<a class="btn btn-sm" href="?boardId=${param.boardId }&page=${ pagenation.totalPage}"> ▶▶ </a>
+			</c:if>
+		</div>
+	</div>
+
+
+
+	<div class="join">
+		<div>
+			<div>
+				<input id="search" class="input input-bordered join-item" placeholder="Search" />
+			</div>
+		</div>
+		<div class="indicator">
+			<button class="btn join-item" onclick="hrefForSearch()">Search</button>
+		</div>
+	</div>
 </section>
-<div class="join w-full flex  justify-center">
 
-	<c:if test="${pagenation.startPage > 1 }">
-		<button class="join-item btn btn-md" onclick="location.href='/usr/article/list?currentPage=${pagenation.startPage-1 }&boardId=${board.id }'">◀</button>
-	</c:if>
-	<c:forEach var="pageIndex" begin="${pagenation.startPage }" end="${pagenation.endPage}">
 
-		<c:choose>
-			<c:when test="${pageIndex==pagenation.currentPage }">
-				<button onclick="false" class="join-item btn btn-md btn-active">${pageIndex }</button>
-			</c:when>
-			<c:otherwise>
-				<button onclick="location.href='/usr/article/list?currentPage=${pageIndex }&boardId=${board.id }'" class="join-item btn btn-md">${pageIndex }</button>
-			</c:otherwise>
-		</c:choose>
-	</c:forEach>
-	<c:if test="${pagenation.endPage < pagenation.totalPage }">
-		<button onclick="location.href='/usr/article/list?currentPage=${pagenation.endPage+1 }&boardId=${board.id }'" class="join-item btn btn-md">▶</button>
-	</c:if>
-</div>
-
+<script>
+function hrefForSearch(){
+	var searchKeyword = document.getElementById('search').value;
+	var boardId ="${param.boardId }";
+	var page ="${pagenation.currentPage }";
+	//alert(searchKeyword + ", " + boardId+","+page);
+	window.location.assign("?search="+searchKeyword+"&boardId="+boardId+"&page="+page);
+}
+</script>
 
 
 <%@ include file="../common/foot.jspf"%>

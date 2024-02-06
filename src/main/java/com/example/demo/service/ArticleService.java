@@ -101,4 +101,9 @@ public class ArticleService {
 		return articleRepository.getForPrintArticles(boardId, limitFrom, limitTake, search, searchType);
 	}
 
+	public void updateViewCount(int id) {
+		articleRepository.updateViewCount(id);
+		
+	}
+
 }

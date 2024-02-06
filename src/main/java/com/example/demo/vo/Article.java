@@ -19,4 +19,6 @@ public class Article {
 
 	private boolean userCanModify;
 	private boolean userCanDelete;
+	
+	private int viewCount;
 }

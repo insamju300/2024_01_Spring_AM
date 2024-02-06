@@ -29,6 +29,10 @@
 					<td>${article.title }</td>
 				</tr>
 				<tr>
+					<th>조회수</th>
+					<td>${article.viewCount }</td>
+				</tr>
+				<tr>
 					<th>내용</th>
 					<td>${article.body }</td>
 				</tr>

@@ -158,3 +158,9 @@ SELECT *
 FROM `board`;
 
 SELECT LAST_INSERT_ID();
+
+
+###############################################
+
+ALTER TABLE article ADD COLUMN viewCount INT(10);
+UPDATE article SET  viewCount=0;

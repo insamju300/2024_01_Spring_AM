@@ -138,4 +138,9 @@ public interface ArticleRepository {
 			""")
 	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String search , int searchType);
 
+	@Update("""
+			UPDATE ARTICLE SET  viewCount=viewCount+1 WHERE id = #{id};
+			""")
+	public void updateViewCount(int id);
+
 }

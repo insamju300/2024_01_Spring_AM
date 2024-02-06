@@ -9,9 +9,10 @@
 		<div class="badge badge-outline">${pagenation.totalItem }개</div>
 		<table class="table-box-1 table" border="1">
 			<colgroup>
-				<col style="width: 10%" />
+				<col style="width: 5%" />
 				<col style="width: 20%" />
 				<col style="width: 60%" />
+				<col style="width: 5%" />
 				<col style="width: 10%" />
 			</colgroup>
 			<thead>
@@ -19,6 +20,7 @@
 					<th>번호</th>
 					<th>날짜</th>
 					<th>제목</th>
+					<th>조회수</th>
 					<th>작성자</th>
 				</tr>
 			</thead>
@@ -29,6 +31,7 @@
 						<td>${article.id }</td>
 						<td>${article.regDate.substring(0,10) }</td>
 						<td><a href="detail?id=${article.id }">${article.title }</a></td>
+						<td>${article.viewCount }</td>
 						<td>${article.extra__writer }</td>
 					</tr>
 				</c:forEach>

@@ -82,10 +82,11 @@
 
 
 <script>
-
-	$("#searchType").val("${param.searchType}").attr("selected", "selected");
-
-	
+	$(document).ready(
+			function($) {
+				$("#searchType").val("${param.searchType}").attr("selected",
+						"selected");
+	}(jQuery));
 
 	function enterkey() {
 		if (window.event.keyCode == 13) {

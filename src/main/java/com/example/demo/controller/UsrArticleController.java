@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.BoardService;
+import com.example.demo.service.LikesService;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
 import com.example.demo.vo.Board;
@@ -31,6 +32,9 @@ public class UsrArticleController {
 
 	@Autowired
 	private BoardService boardService;
+	
+	@Autowired
+	private LikesService likeService;
 
 	public UsrArticleController() {
 
@@ -76,7 +80,15 @@ public class UsrArticleController {
 		Rq rq = (Rq) req.getAttribute("rq");
 
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
-
+        Boolean isLiked = null;
+        
+        if(rq.isLogined()) {
+        	isLiked = likeService.isLiked(id, rq.getLoginedMemberId());	
+        }
+		
+		
+		
+        model.addAttribute("isLiked", isLiked);
 		model.addAttribute("article", article);
 		
 		articleService.updateViewCount(id);

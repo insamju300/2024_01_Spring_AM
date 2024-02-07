@@ -164,3 +164,11 @@ SELECT LAST_INSERT_ID();
 
 ALTER TABLE article ADD COLUMN viewCount INT(10);
 UPDATE article SET  viewCount=0;
+
+
+###############################################
+CREAT TABLE LIKES(
+    id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    articleId INT(10) UNSIGNED NOT NULL,
+    memberId INT(10) UNSIGNED NOT NULL
+)

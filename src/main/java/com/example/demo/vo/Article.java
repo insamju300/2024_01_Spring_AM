@@ -21,4 +21,5 @@ public class Article {
 	private boolean userCanDelete;
 	
 	private int viewCount;
+	private int likeCount;
 }

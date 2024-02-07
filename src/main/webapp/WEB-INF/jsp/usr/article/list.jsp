@@ -11,7 +11,8 @@
 			<colgroup>
 				<col style="width: 5%" />
 				<col style="width: 20%" />
-				<col style="width: 60%" />
+				<col style="width: 55%" />
+				<col style="width: 5%" />
 				<col style="width: 5%" />
 				<col style="width: 10%" />
 			</colgroup>
@@ -20,6 +21,7 @@
 					<th>번호</th>
 					<th>날짜</th>
 					<th>제목</th>
+					<th>좋아요수</th>
 					<th>조회수</th>
 					<th>작성자</th>
 				</tr>
@@ -31,6 +33,7 @@
 						<td>${article.id }</td>
 						<td>${article.regDate.substring(0,10) }</td>
 						<td><a href="detail?id=${article.id }">${article.title }</a></td>
+						<td>${article.likeCount }</td>
 						<td>${article.viewCount }</td>
 						<td>${article.extra__writer }</td>
 					</tr>

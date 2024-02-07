@@ -113,10 +113,12 @@ public interface ArticleRepository {
 
 	@Select("""
 			<script>
-			SELECT A.*, M.nickname AS extra__writer
+			SELECT A.*, M.nickname AS extra__write, COUNT(L.id) AS likeCount
 			FROM article AS A
 			INNER JOIN `member` AS M
 			ON A.memberId = M.id
+			LEFT OUTER JOIN LIKES L
+			ON A.id = L.articleId
 			WHERE 1
 			<if test="boardId != 0">
 				AND A.boardId = #{boardId}
@@ -138,6 +140,7 @@ public interface ArticleRepository {
 					</otherwise>
 				</choose>
 			</if>
+			GROUP BY A.id
 			ORDER BY A.id DESC
 			<if test="limitFrom >= 0 ">
 				LIMIT #{limitFrom}, #{limitTake}
@@ -147,7 +150,7 @@ public interface ArticleRepository {
 	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String search , int searchType);
 
 	@Update("""
-			UPDATE ARTICLE SET  viewCount=viewCount+1 WHERE id = #{id};
+			UPDATE ARTICLE SET  viewCount=(IFNULL(viewCount,0) +1) WHERE id = #{id};
 			""")
 	public void updateViewCount(int id);
 

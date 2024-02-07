@@ -3,9 +3,9 @@
 <c:set var="pageTitle" value="#{board.code } ARTICLE LIST"></c:set>
 <%@ include file="../common/head.jspf"%>
 
-<c:set var="baseUri" value="?boardId=${param.boardId }"/>
-<c:set var="baseUri" value="${baseUri}&search=${param.search }"/>
-<c:set var="baseUri" value="${baseUri}&searchType=${param.searchType }"/>
+<c:set var="baseUri" value="?boardId=${param.boardId }" />
+<c:set var="baseUri" value="${baseUri}&search=${param.search }" />
+<c:set var="baseUri" value="${baseUri}&searchType=${param.searchType }" />
 
 
 <section class="mt-8 text-xl px-4">
@@ -48,17 +48,13 @@
 	<div class="pagination flex justify-center mt-3">
 		<div class="btn-group">
 			<c:if test="${pagenation.startPage > 1 }">
-				<a class="btn btn-sm"
-					href="${baseUri }&page=1"> ◀◀ </a>
+				<a class="btn btn-sm" href="${baseUri }&page=1"> ◀◀ </a>
 			</c:if>
 			<c:forEach begin="${pagenation.startPage }" end="${pagenation.endPage }" var="i">
-				<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }"
-					href="${baseUri }&page=${i }">${i }</a>
+				<a class="btn btn-sm ${pagenation.currentPage == i ? 'btn-active' : '' }" href="${baseUri }&page=${i }">${i }</a>
 			</c:forEach>
 			<c:if test="${pagenation.endPage < pagenation.totalPage }">
-				<a class="btn btn-sm"
-					href="${baseUri }&page=${ pagenation.totalPage}">
-					▶▶ </a>
+				<a class="btn btn-sm" href="${baseUri }&page=${ pagenation.totalPage}"> ▶▶ </a>
 			</c:if>
 		</div>
 	</div>
@@ -72,7 +68,8 @@
 					<option value="1" selected>제목</option>
 					<option value="2">내용</option>
 					<option value="3">작성자</option>
-				</select> <input id="search" onkeyup="enterkey()" class="input input-bordered join-item" placeholder="Search" />
+				</select> <input id="search" onkeyup="enterkey()" class="input input-bordered join-item" placeholder="Search"
+					value="${param.search}" />
 
 			</div>
 
@@ -85,6 +82,11 @@
 
 
 <script>
+
+	$("#searchType").val("${param.searchType}").attr("selected", "selected");
+
+	
+
 	function enterkey() {
 		if (window.event.keyCode == 13) {
 			hrefForSearch();

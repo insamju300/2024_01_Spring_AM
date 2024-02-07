@@ -113,7 +113,7 @@ public interface ArticleRepository {
 
 	@Select("""
 			<script>
-			SELECT A.*, M.nickname AS extra__write, COUNT(L.id) AS likeCount
+			SELECT A.*, M.nickname AS extra__writer, COUNT(L.id) AS likeCount
 			FROM article AS A
 			INNER JOIN `member` AS M
 			ON A.memberId = M.id

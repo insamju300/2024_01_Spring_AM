@@ -40,7 +40,7 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/list")
 	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId,
-			@RequestParam(defaultValue = "1") int page, String search, @RequestParam(defaultValue = "1") int searchType) {
+			@RequestParam(defaultValue = "1") int page, String search, @RequestParam(defaultValue = "0") int searchType) {
 		if(search!=null) {
 			search=search.trim();
 		}

@@ -101,6 +101,10 @@ public interface ArticleRepository {
 				    <when test="searchType==3">
 					    AND M.nickname like CONCAT('%', #{search}, '%')
 					</when>
+					<otherwise>
+					    AND title like CONCAT('%', #{search}, '%')
+					    OR `body` like CONCAT('%', #{search}, '%')
+					</otherwise>
 				</choose>
 			</if>
 			</script>
@@ -128,6 +132,10 @@ public interface ArticleRepository {
 				    <when test="searchType==3">
 					    AND M.nickname like CONCAT('%', #{search}, '%')
 					</when>
+					<otherwise>
+					    AND title like CONCAT('%', #{search}, '%')
+					    OR `body` like CONCAT('%', #{search}, '%')
+					</otherwise>
 				</choose>
 			</if>
 			ORDER BY A.id DESC

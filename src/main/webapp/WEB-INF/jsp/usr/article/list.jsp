@@ -3,6 +3,10 @@
 <c:set var="pageTitle" value="#{board.code } ARTICLE LIST"></c:set>
 <%@ include file="../common/head.jspf"%>
 
+<c:set var="baseUri" value="?boardId=${param.boardId }"/>
+<c:set var="baseUri" value="${baseUri}&search=${param.search }"/>
+<c:set var="baseUri" value="${baseUri}&searchType=${param.searchType }"/>
+
 
 <section class="mt-8 text-xl px-4">
 	<div class="mx-auto overflow-x-auto">
@@ -45,15 +49,15 @@
 		<div class="btn-group">
 			<c:if test="${pagenation.startPage > 1 }">
 				<a class="btn btn-sm"
-					href="?boardId=${param.boardId }&page=1&search=${param.search }&searchType=${param.searchType }"> ◀◀ </a>
+					href="${baseUri }&page=1"> ◀◀ </a>
 			</c:if>
 			<c:forEach begin="${pagenation.startPage }" end="${pagenation.endPage }" var="i">
 				<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }"
-					href="?boardId=${param.boardId }&page=${i }&search=${param.search }&searchType=${param.searchType }">${i }</a>
+					href="${baseUri }&page=${i }">${i }</a>
 			</c:forEach>
 			<c:if test="${pagenation.endPage < pagenation.totalPage }">
 				<a class="btn btn-sm"
-					href="?boardId=${param.boardId }&page=${ pagenation.totalPage}&search=${param.search }&searchType=${param.searchType }">
+					href="${baseUri }&page=${ pagenation.totalPage}">
 					▶▶ </a>
 			</c:if>
 		</div>

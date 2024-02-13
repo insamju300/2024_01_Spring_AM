@@ -7,9 +7,8 @@
 <script>
 	const params = {};
 	params.id = parseInt('${param.id}');
-</script>
+	let localStorageName = 'isAlreadyHit'+params.id;
 
-<script>
 	function ArticleDetail__doIncreaseHitCount() {
 		$.get('../article/doIncreaseHitCountRd', {
 			id : params.id,
@@ -17,11 +16,17 @@
 		}, function(data) {
 			$('.article-detail__hit-count').empty().html(data.data1);
 		}, 'json');
+		
+		
+		localStorage.setItem(localStorageName, true);
 	}
 
 	$(function() {
-// 		ArticleDetail__doIncreaseHitCount();
-		setTimeout(ArticleDetail__doIncreaseHitCount, 2000);
+		console.log('isAlreadyHit'+params.id);
+ 		if(!localStorage.getItem(localStorageName)){
+		    ArticleDetail__doIncreaseHitCount();
+// 		setTimeout(ArticleDetail__doIncreaseHitCount, 2000);
+         }
 	})
 </script>
 

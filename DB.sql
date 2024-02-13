@@ -143,6 +143,8 @@ UPDATE article
 SET boardId = 3
 WHERE id = 4;
 
+ALTER TABLE article ADD COLUMN hitCount INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `body`;
+
 ###############################################
 
 INSERT INTO article

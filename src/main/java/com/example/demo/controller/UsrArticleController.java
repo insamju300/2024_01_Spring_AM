@@ -78,6 +78,11 @@ public class UsrArticleController {
 	@RequestMapping("/usr/article/detail")
 	public String showDetail(HttpServletRequest req, Model model, int id) {
 		Rq rq = (Rq) req.getAttribute("rq");
+		
+		ResultData increaseHitCountRd = articleService.increaseHitCount(id);
+		if(increaseHitCountRd.isFail()) {
+			return rq.historyBackOnView(increaseHitCountRd.getMsg());
+		}
 
 		articleService.increaseHitCount(id);
 

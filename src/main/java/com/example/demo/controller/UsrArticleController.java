@@ -11,11 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.BoardService;
-import com.example.demo.service.LikesService;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
 import com.example.demo.vo.Board;
-import com.example.demo.vo.Pagenation;
 import com.example.demo.vo.ResultData;
 import com.example.demo.vo.Rq;
 
@@ -32,9 +30,6 @@ public class UsrArticleController {
 
 	@Autowired
 	private BoardService boardService;
-	
-	@Autowired
-	private LikesService likeService;
 
 	public UsrArticleController() {
 
@@ -44,32 +39,37 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/list")
 	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId,
-			@RequestParam(defaultValue = "1") int page, String search, @RequestParam(defaultValue = "0") int searchType) {
-		if(search!=null) {
-			search=search.trim();
-		}
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "title,body") String searchKeywordTypeCode,
+			@RequestParam(defaultValue = "") String searchKeyword) {
 
 		Rq rq = (Rq) req.getAttribute("rq");
 
 		Board board = boardService.getBoardById(boardId);
-		
-		System.err.println("searchType" + ":" +searchType);
 
-		int articlesCount = articleService.getArticlesCount(boardId, search, searchType);
-		
-		Pagenation pagenation = new Pagenation(10, 10, page, articlesCount);
+		int articlesCount = articleService.getArticlesCount(boardId, searchKeywordTypeCode, searchKeyword);
 
 		if (board == null) {
 			return rq.historyBackOnView("없는 게시판이야");
 		}
 
+		// 한페이지에 글 10개씩이야
+		// 글 20개 -> 2 page
+		// 글 24개 -> 3 page
 		int itemsInAPage = 10;
 
-		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page, search, searchType);
+		int pagesCount = (int) Math.ceil(articlesCount / (double) itemsInAPage);
 
-		model.addAttribute("pagenation", pagenation);
+		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page, searchKeywordTypeCode,
+				searchKeyword);
+
 		model.addAttribute("board", board);
-		//model.addAttribute("articlesCount", articlesCount);
+		model.addAttribute("boardId", boardId);
+		model.addAttribute("page", page);
+		model.addAttribute("pagesCount", pagesCount);
+		model.addAttribute("searchKeywordTypeCode", searchKeywordTypeCode);
+		model.addAttribute("searchKeyword", searchKeyword);
+		model.addAttribute("articlesCount", articlesCount);
 		model.addAttribute("articles", articles);
 
 		return "usr/article/list";
@@ -79,19 +79,11 @@ public class UsrArticleController {
 	public String showDetail(HttpServletRequest req, Model model, int id) {
 		Rq rq = (Rq) req.getAttribute("rq");
 
+		articleService.increaseHitCount(id);
+
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
-        Boolean isLiked = null;
-        
-        if(rq.isLogined()) {
-        	isLiked = likeService.isLiked(id, rq.getLoginedMemberId());	
-        }
-		
-		
-		
-        model.addAttribute("isLiked", isLiked);
+
 		model.addAttribute("article", article);
-		
-		articleService.updateViewCount(id);
 
 		return "usr/article/detail";
 	}

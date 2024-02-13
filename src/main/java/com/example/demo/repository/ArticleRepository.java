@@ -82,76 +82,69 @@ public interface ArticleRepository {
 
 	@Select("""
 			<script>
-			SELECT COUNT(1) AS cnt
-			FROM article A
-			INNER JOIN `member` AS M
-			ON A.memberId = M.id
+			SELECT COUNT(*) AS cnt
+			FROM article AS A
 			WHERE 1
 			<if test="boardId != 0">
 				AND boardId = #{boardId}
 			</if>
-			<if test="search!=null and !search.equals('')">
-			    <choose>
-				    <when test="searchType==1">
-					    AND title like CONCAT('%', #{search}, '%')
+			<if test="searchKeyword != ''">
+				<choose>
+					<when test="searchKeywordTypeCode == 'title'">
+						AND A.title LIKE CONCAT('%',#{searchKeyword},'%')
 					</when>
-				    <when test="searchType==2">
-					    AND `body` like CONCAT('%', #{search}, '%')
-					</when>
-				    <when test="searchType==3">
-					    AND M.nickname like CONCAT('%', #{search}, '%')
+					<when test="searchKeywordTypeCode == 'body'">
+						AND A.body LIKE CONCAT('%',#{searchKeyword},'%')
 					</when>
 					<otherwise>
-					    AND title like CONCAT('%', #{search}, '%')
-					    OR `body` like CONCAT('%', #{search}, '%')
+						AND A.title LIKE CONCAT('%',#{searchKeyword},'%')
+						OR A.body LIKE CONCAT('%',#{searchKeyword},'%')
 					</otherwise>
 				</choose>
 			</if>
+			ORDER BY id DESC
 			</script>
 			""")
-	public int getArticlesCount(int boardId, String search, int searchType);
+	public int getArticlesCount(int boardId, String searchKeywordTypeCode, String searchKeyword);
+
+	@Update("""
+			UPDATE article
+			SET hitCount = hitCount + 1
+			WHERE id = #{id}
+			""")
+	public void increaseHitCount(int id);
 
 	@Select("""
 			<script>
-			SELECT A.*, M.nickname AS extra__writer, COUNT(L.id) AS likeCount
+			SELECT A.*, M.nickname AS extra__writer
 			FROM article AS A
 			INNER JOIN `member` AS M
 			ON A.memberId = M.id
-			LEFT OUTER JOIN LIKES L
-			ON A.id = L.articleId
 			WHERE 1
 			<if test="boardId != 0">
 				AND A.boardId = #{boardId}
 			</if>
-			<if test="search!=null and !search.equals('')">
-			    <choose>
-				    <when test="searchType==1">
-					    AND title like CONCAT('%', #{search}, '%')
+			<if test="searchKeyword != ''">
+				<choose>
+					<when test="searchKeywordTypeCode == 'title'">
+						AND A.title LIKE CONCAT('%',#{searchKeyword},'%')
 					</when>
-				    <when test="searchType==2">
-					    AND `body` like CONCAT('%', #{search}, '%')
-					</when>
-				    <when test="searchType==3">
-					    AND M.nickname like CONCAT('%', #{search}, '%')
+					<when test="searchKeywordTypeCode == 'body'">
+						AND A.body LIKE CONCAT('%',#{searchKeyword},'%')
 					</when>
 					<otherwise>
-					    AND title like CONCAT('%', #{search}, '%')
-					    OR `body` like CONCAT('%', #{search}, '%')
+						AND A.title LIKE CONCAT('%',#{searchKeyword},'%')
+						OR A.body LIKE CONCAT('%',#{searchKeyword},'%')
 					</otherwise>
 				</choose>
 			</if>
-			GROUP BY A.id
 			ORDER BY A.id DESC
 			<if test="limitFrom >= 0 ">
 				LIMIT #{limitFrom}, #{limitTake}
 			</if>
 			</script>
 			""")
-	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String search , int searchType);
-
-	@Update("""
-			UPDATE ARTICLE SET  viewCount=(IFNULL(viewCount,0) +1) WHERE id = #{id};
-			""")
-	public void updateViewCount(int id);
+	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String searchKeywordTypeCode,
+			String searchKeyword);
 
 }

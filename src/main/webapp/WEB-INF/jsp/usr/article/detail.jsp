@@ -25,20 +25,16 @@
 					<td>${article.extra__writer }</td>
 				</tr>
 				<tr>
-				    <th>좋아요</th>
-				    <td><button class="${isLiked? 'text-red-800':'' }" type="button" onclick="likeToggle(this);"><i class="fa-solid fa-heart"></i></button></td>
-				</tr>
-				<tr>
 					<th>제목</th>
 					<td>${article.title }</td>
 				</tr>
 				<tr>
-					<th>조회수</th>
-					<td>${article.viewCount }</td>
-				</tr>
-				<tr>
 					<th>내용</th>
 					<td>${article.body }</td>
+				</tr>
+				<tr>
+					<th>조회수</th>
+					<td>${article.hitCount }</td>
 				</tr>
 			</tbody>
 		</table>
@@ -51,32 +47,10 @@
 				<a class="btn btn-outline" onclick="if(confirm('정말 삭제하시겠습니까?') == false) return false;"
 					href="../article/doDelete?id=${article.id }">삭제</a>
 			</c:if>
-
-			
 		</div>
 	</div>
-
 </section>
 
 
-<script>
-	function likeToggle(like) {
-
-		$.ajax("/usr/likes/doToggle", {
-			method : 'post',
-			dataType : 'json',
-			data : {
-				"id" : "${article.id }"
-			}
-		}).done(function(result) { // 서버요청이 성공시의 콜백함수
-			if(result=="1"){
-				like.classList.add('text-red-800');
-			}else{
-				like.classList.remove('text-red-800');
-			};
-		})
-
-	}
-</script>
 
 <%@ include file="../common/foot.jspf"%>

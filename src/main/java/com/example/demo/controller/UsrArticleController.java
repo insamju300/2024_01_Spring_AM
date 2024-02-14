@@ -35,7 +35,6 @@ public class UsrArticleController {
 
 	}
 
-
 	// 액션 메서드
 
 	@RequestMapping("/usr/article/list")
@@ -79,11 +78,10 @@ public class UsrArticleController {
 	@RequestMapping("/usr/article/detail")
 	public String showDetail(HttpServletRequest req, Model model, int id) {
 		Rq rq = (Rq) req.getAttribute("rq");
-		System.err.println(rq.getLoginedMemberId());
+
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
-		System.err.println(article.toString());
+
 		model.addAttribute("article", article);
-		
 
 		return "usr/article/detail";
 	}

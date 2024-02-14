@@ -15,5 +15,9 @@ public class Preference {
 		this.hates = hates;
 		this.likesCount = likesCount;
 	}
+	public Preference(boolean likes, int likesCount) {
+		this.likes = likes;
+		this.likesCount = likesCount;
+	}
   
 }

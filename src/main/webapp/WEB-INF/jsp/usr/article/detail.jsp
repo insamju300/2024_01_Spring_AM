@@ -27,19 +27,52 @@
 			// 		setTimeout(ArticleDetail__doIncreaseHitCount, 2000);
 		}
 	})
-	
+
 	function loginCheck() {
 		var loginCheck = "${rq.isLogined() }";
-		if (loginCheck=="false") {
+		if (loginCheck == "false") {
 			alert("로그인 후 이용할 수 있습니다.");
 			return false;
 		}
+		var loginMemberId = "${rq.loginedMemberId }";
+		var articleMemberId = "${article.memberId}"
 		
+		if(loginMemberId == articleMemberId){
+			alert("본인의 글에는 좋아요나 싫어요를 누를 수 없습니다.")
+			return false;
+		}
+
 		return true;
+	}
+	function test(){
+		alert("곤란해");
+		Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-gray-400'));
+		Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-red-600'));
+	}
+	
+	function toggleLikeOnly(){
+		if (!loginCheck()) {
+			return;
+		}
+		
+		$.get('../preferance/toggleLikeOnly', {
+			id : params.id
+		}, function(data) {
+			console.log(data);
+			if (data.likes) {
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-red-600'));
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-gray-400'));
+			} else {
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-gray-400'));
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-red-600'));
+			}
+			$('.likesCount').empty().html(data.likesCount);
+
+		}, 'json');
 	}
 
 	function toggleLike() {
-		if(!loginCheck()){
+		if (!loginCheck()) {
 			return;
 		}
 
@@ -48,32 +81,27 @@
 		}, function(data) {
 			console.log(data);
 			if (data.likes) {
-				document.getElementById("like").classList.add('text-red-600')
-				document.getElementById("like").classList
-						.remove('text-gray-400')
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-red-600'));
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-gray-400'));
 			} else {
-				document.getElementById("like").classList.add('text-gray-400')
-				document.getElementById("like").classList
-						.remove('text-red-600')
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-gray-400'));
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-red-600'));
 			}
 			if (data.hates) {
-				document.getElementById("hate").classList
-						.add('text-purple-700')
-				document.getElementById("hate").classList
-						.remove('text-gray-400')
+				Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.add('text-purple-700'));
+				Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.remove('text-gray-400'));
 			} else {
-				document.getElementById("hate").classList.add('ext-gray-400')
-				document.getElementById("hate").classList
-						.remove('text-purple-700')
+				Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.add('text-gray-400'));
+				Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.remove('text-purple-700'));
 			}
-			$('#likesCount').empty().html(data.likesCount);
+			$('.likesCount').empty().html(data.likesCount);
 
 		}, 'json');
 
 	}
 
 	function toggleHate() {
-		if(!loginCheck()){
+		if (!loginCheck()) {
 			return;
 		}
 		loginCheck();
@@ -82,25 +110,20 @@
 		}, function(data) {
 			console.log(data);
 			if (data.likes) {
-				document.getElementById("like").classList.add('text-red-600')
-				document.getElementById("like").classList
-						.remove('text-gray-400')
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-red-600'));
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-gray-400'));
 			} else {
-				document.getElementById("like").classList.add('text-gray-400')
-				document.getElementById("like").classList
-						.remove('text-red-600')
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-gray-400'));
+				Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-red-600'));
 			}
 			if (data.hates) {
-				document.getElementById("hate").classList
-						.add('text-purple-700')
-				document.getElementById("hate").classList
-						.remove('text-gray-400')
+				Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.add('text-purple-700'));
+				Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.remove('text-gray-400'));
 			} else {
-				document.getElementById("hate").classList.add('text-gray-400')
-				document.getElementById("hate").classList
-						.remove('text-purple-700')
+				Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.add('text-gray-400'));
+				Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.remove('text-purple-700'));
 			}
-			$('#likesCount').empty().html(data.likesCount);
+			$('.likesCount').empty().html(data.likesCount);
 		}, 'json');
 
 	}
@@ -108,56 +131,113 @@
 
 <section class="mt-8 text-xl px-4">
 	<div class="mx-auto">
-		<table class="table-box-1" border="1">
-			<tbody>
-				<tr>
-					<th>번호</th>
-					<td>${article.id }</td>
-				</tr>
-				<tr>
-					<th>작성날짜</th>
-					<td>${article.regDate }</td>
-				</tr>
-				<tr>
-					<th>수정날짜</th>
-					<td>${article.updateDate }</td>
-				</tr>
-				<tr>
-					<th>작성자</th>
-					<td>${article.extra__writer }</td>
-				</tr>
-				<tr>
-					<th>제목</th>
-					<td>${article.title }</td>
-				</tr>
+		<div class="flex">
+			<table class="table-box-1" border="1">
+				<tbody>
+					<tr>
+						<th>번호</th>
+						<td>${article.id }</td>
+					</tr>
+					<tr>
+						<th>작성날짜</th>
+						<td>${article.regDate }</td>
+					</tr>
+					<tr>
+						<th>수정날짜</th>
+						<td>${article.updateDate }</td>
+					</tr>
+					<tr>
+						<th>작성자</th>
+						<td>${article.extra__writer }</td>
+					</tr>
+					<tr>
+						<th>제목</th>
+						<td>${article.title }</td>
+					</tr>
+					
+					
+					<tr>
+						<th>테스트</th>
+						<td>
+							<button onclick="test()">
+								테스트
+							</button>
+						</td>					
+					</tr>
 
-				<tr>
-					<th>좋아요</th>
-					<td>
-						<button id="like" onclick="toggleLike()" class="${article.likes? 'text-red-600' : 'text-gray-400' }">
-							<i class="fa-solid fa-heart"></i>
-						</button>
-						<p id="likesCount">${article.likesCount }</p>
-					</td>
-				</tr>
-				<tr>
-					<th>싫어요</th>
-					<td>
-						<button id="hate" onclick="toggleHate()" class="${article.hates? 'text-purple-700' : 'text-gray-400' }">
-							<i class="fa-solid fa-hand-middle-finger"></i>
-						</button>
-					</td>
-				</tr>
-				<tr>
-					<th>내용</th>
-					<td>${article.body }</td>
-				</tr>
-				<tr>
-					<th>조회수</th>
-					<td><span class="article-detail__hit-count">${article.hitCount }</span></td>
-				</tr>
-			</tbody>
-		</table>
+
+					<tr>
+						<th>좋아요</th>
+						<td>
+							<button onclick="toggleLike()" class="like ${article.likes? 'text-red-600' : 'text-gray-400' }">
+								<i class="fa-solid fa-heart"></i>
+							</button>
+							<p class="likesCount">${article.likesCount }</p>
+						</td>
+					</tr>
+					<tr>
+						<th>싫어요</th>
+						<td>
+							<button onclick="toggleHate()" class="hate ${article.hates? 'text-purple-700' : 'text-gray-400' }">
+								<i class="fa-solid fa-hand-middle-finger"></i>
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<th>내용</th>
+						<td>${article.body }</td>
+					</tr>
+					<tr>
+						<th>조회수</th>
+						<td><span class="article-detail__hit-count">${article.hitCount }</span></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<table class="table-box-1" border="1">
+				<tbody>
+					<tr>
+						<th>번호</th>
+						<td>${article.id }</td>
+					</tr>
+					<tr>
+						<th>작성날짜</th>
+						<td>${article.regDate }</td>
+					</tr>
+					<tr>
+						<th>수정날짜</th>
+						<td>${article.updateDate }</td>
+					</tr>
+					<tr>
+						<th>작성자</th>
+						<td>${article.extra__writer }</td>
+					</tr>
+					<tr>
+						<th>제목</th>
+						<td>${article.title }</td>
+					</tr>
+
+					<tr>
+						<th>좋아요</th>
+						<td>
+							<button onclick="toggleLikeOnly()" class="like ${article.likes? 'text-red-600' : 'text-gray-400' }">
+								<i class="fa-solid fa-heart"></i>
+							</button>
+							<p class="likesCount">${article.likesCount }</p>
+						</td>
+					</tr>
+					<tr>
+						<th>내용</th>
+						<td>${article.body }</td>
+					</tr>
+					<tr>
+						<th>조회수</th>
+						<td><span class="article-detail__hit-count">${article.hitCount }</span></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
 		<div class="btns mt-5">
 			<button class="btn btn-outline" type="button" onclick="history.back();">뒤로가기</button>
 			<c:if test="${article.userCanModify }">

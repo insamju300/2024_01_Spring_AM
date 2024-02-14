@@ -15,6 +15,26 @@ public class PreferenceController {
 	@Autowired
 	private PreferenceService preferenceService;
 	
+	@RequestMapping("/usr/preferance/toggleLikeOnly")
+	public Preference toggleLikeOnly(HttpServletRequest req, int id) {
+		Rq rq = (Rq) req.getAttribute("rq");
+		boolean isLikes = preferenceService.isLikes(rq.getLoginedMemberId(), id);
+		
+		if(isLikes) {
+			preferenceService.deleteLikes(rq.getLoginedMemberId(), id);
+			isLikes = false;
+		}else{
+			preferenceService.insertLikes(rq.getLoginedMemberId(), id);
+			isLikes = true;
+		}
+		
+		int likesCount = preferenceService.getLikesCount(id);
+		
+		Preference preference = new Preference(isLikes, likesCount);
+		
+		return preference;
+	}
+	
 	@RequestMapping("/usr/preferance/toggleLike")
 	public Preference toggleLike(HttpServletRequest req, int id) {
 		Rq rq = (Rq) req.getAttribute("rq");

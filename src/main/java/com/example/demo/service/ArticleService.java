@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -116,6 +117,13 @@ public class ArticleService {
 
 		return articleRepository.getForPrintArticles(boardId, limitFrom, limitTake, searchKeywordTypeCode,
 				searchKeyword);
+	}
+
+
+	public void updateJoinReactionPonits(int relId, String relTypeCode) {
+		// TODO Auto-generated method stub
+		articleRepository.updateJoinReationPoints(relId, relTypeCode);
+		
 	}
 
 }

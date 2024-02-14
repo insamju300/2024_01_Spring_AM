@@ -168,4 +168,21 @@ public interface ArticleRepository {
 	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String searchKeywordTypeCode,
 			String searchKeyword);
 
+	@Update("""
+			UPDATE article AS A
+			INNER JOIN (
+			    SELECT RP.relTypeCode,RP.relId,
+			    SUM(IF(RP.point > 0, RP.point, 0)) AS goodReactionPoint,
+			    SUM(IF(RP.point < 0, RP.point * -1, 0)) AS badReactionPoint
+			    FROM reactionPoint AS RP
+			    WHERE RP.relID = #{relId} 
+			    AND RP.relTypeCode = #{relTypeCode}
+			    GROUP BY RP.relTypeCode, RP.relId
+			) AS RP_SUM
+			ON A.id = RP_SUM.relId
+			SET A.goodReactionPoint = RP_SUM.goodReactionPoint,
+			A.badReactionPoint = RP_SUM.badReactionPoint;
+						""")
+	public void updateJoinReationPoints(int relId, String relTypeCode);
+
 }

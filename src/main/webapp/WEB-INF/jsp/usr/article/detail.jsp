@@ -7,7 +7,7 @@
 <script>
 	const params = {};
 	params.id = parseInt('${param.id}');
-	let localStorageName = 'isAlreadyHit'+params.id;
+	let localStorageName = 'isAlreadyHit' + params.id;
 
 	function ArticleDetail__doIncreaseHitCount() {
 		$.get('../article/doIncreaseHitCountRd', {
@@ -16,18 +16,94 @@
 		}, function(data) {
 			$('.article-detail__hit-count').empty().html(data.data1);
 		}, 'json');
-		
-		
+
 		localStorage.setItem(localStorageName, true);
 	}
 
 	$(function() {
-		console.log('isAlreadyHit'+params.id);
- 		if(!localStorage.getItem(localStorageName)){
-		    ArticleDetail__doIncreaseHitCount();
-// 		setTimeout(ArticleDetail__doIncreaseHitCount, 2000);
-         }
+		console.log('isAlreadyHit' + params.id);
+		if (!localStorage.getItem(localStorageName)) {
+			ArticleDetail__doIncreaseHitCount();
+			// 		setTimeout(ArticleDetail__doIncreaseHitCount, 2000);
+		}
 	})
+	
+	function loginCheck() {
+		var loginCheck = "${rq.isLogined() }";
+		if (loginCheck=="false") {
+			alert("로그인 후 이용할 수 있습니다.");
+			return false;
+		}
+		
+		return true;
+	}
+
+	function toggleLike() {
+		if(!loginCheck()){
+			return;
+		}
+
+		$.get('../preferance/toggleLike', {
+			id : params.id
+		}, function(data) {
+			console.log(data);
+			if (data.likes) {
+				document.getElementById("like").classList.add('text-red-600')
+				document.getElementById("like").classList
+						.remove('text-gray-400')
+			} else {
+				document.getElementById("like").classList.add('text-gray-400')
+				document.getElementById("like").classList
+						.remove('text-red-600')
+			}
+			if (data.hates) {
+				document.getElementById("hate").classList
+						.add('text-purple-700')
+				document.getElementById("hate").classList
+						.remove('text-gray-400')
+			} else {
+				document.getElementById("hate").classList.add('ext-gray-400')
+				document.getElementById("hate").classList
+						.remove('text-purple-700')
+			}
+			$('#likesCount').empty().html(data.likesCount);
+
+		}, 'json');
+
+	}
+
+	function toggleHate() {
+		if(!loginCheck()){
+			return;
+		}
+		loginCheck();
+		$.get('../preferance/toggleHate', {
+			id : params.id
+		}, function(data) {
+			console.log(data);
+			if (data.likes) {
+				document.getElementById("like").classList.add('text-red-600')
+				document.getElementById("like").classList
+						.remove('text-gray-400')
+			} else {
+				document.getElementById("like").classList.add('text-gray-400')
+				document.getElementById("like").classList
+						.remove('text-red-600')
+			}
+			if (data.hates) {
+				document.getElementById("hate").classList
+						.add('text-purple-700')
+				document.getElementById("hate").classList
+						.remove('text-gray-400')
+			} else {
+				document.getElementById("hate").classList.add('text-gray-400')
+				document.getElementById("hate").classList
+						.remove('text-purple-700')
+			}
+			$('#likesCount').empty().html(data.likesCount);
+		}, 'json');
+
+	}
 </script>
 
 <section class="mt-8 text-xl px-4">
@@ -53,6 +129,24 @@
 				<tr>
 					<th>제목</th>
 					<td>${article.title }</td>
+				</tr>
+
+				<tr>
+					<th>좋아요</th>
+					<td>
+						<button id="like" onclick="toggleLike()" class="${article.likes? 'text-red-600' : 'text-gray-400' }">
+							<i class="fa-solid fa-heart"></i>
+						</button>
+						<p id="likesCount">${article.likesCount }</p>
+					</td>
+				</tr>
+				<tr>
+					<th>싫어요</th>
+					<td>
+						<button id="hate" onclick="toggleHate()" class="${article.hates? 'text-purple-700' : 'text-gray-400' }">
+							<i class="fa-solid fa-hand-middle-finger"></i>
+						</button>
+					</td>
 				</tr>
 				<tr>
 					<th>내용</th>

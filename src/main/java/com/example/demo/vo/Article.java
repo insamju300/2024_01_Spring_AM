@@ -15,6 +15,10 @@ public class Article {
 	private String title;
 	private String body;
 	private int hitCount;
+	private int likesCount;
+	
+	private boolean likes;
+	private boolean hates;
 
 	private String extra__writer;
 

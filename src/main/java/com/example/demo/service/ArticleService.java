@@ -22,7 +22,7 @@ public class ArticleService {
 
 	// 서비스 메서드
 	public Article getForPrintArticle(int loginedMemberId, int id) {
-		Article article = articleRepository.getForPrintArticle(id);
+		Article article = articleRepository.getForPrintArticle(loginedMemberId, id);
 
 		controlForPrintData(loginedMemberId, article);
 

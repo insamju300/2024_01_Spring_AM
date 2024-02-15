@@ -4,6 +4,8 @@
 <%@ include file="../common/head.jspf"%>
 
 <!-- <iframe src="http://localhost:8081/usr/article/doIncreaseHitCountRd?id=372" frameborder="0"></iframe> -->
+
+
 <script>
 	const params = {};
 	params.id = parseInt('${param.id}');
@@ -30,7 +32,7 @@
 	$(function() {
 		// 		ArticleDetail__doIncreaseHitCount();
 		setTimeout(ArticleDetail__doIncreaseHitCount, 2000);
-	})
+	});
 </script>
 
 <section class="mt-8 text-xl px-4">
@@ -54,7 +56,7 @@
 					<td>${article.extra__writer }</td>
 				</tr>
 				<tr>
-					<th>좋아요</th>
+					<th class="reaction">좋아요</th>
 					<td>${article.goodReactionPoint }</td>
 				</tr>
 				<tr>
@@ -62,8 +64,11 @@
 					<td>${article.badReactionPoint }</td>
 				</tr>
 				<tr>
-					<th>추천</th>
-					<td><span class="btn btn-outline btn-success">좋아요</span>&nbsp;&nbsp;<span class="btn btn-outline btn-error">싫어요</span></td>
+					<th>추천 ${usersReaction }</th>
+					<td><a
+							href="/usr/reactionPoint/doGoodReaction?relTypeCode=article&relId=${param.id }&replaceUri=${rq.currentUri}"
+							class="reaction btn btn-outline btn-success">좋아요</a> &nbsp;&nbsp; <a href="/usr/reactionPoint/doBadReaction"
+							class="reaction btn btn-outline btn-error">싫어요</a></td>
 				</tr>
 				<tr>
 					<th>조회수</th>

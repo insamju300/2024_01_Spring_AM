@@ -20,6 +20,11 @@ public class Comment {
     private int articleId;
     private Integer parentId;
     private Integer originalParentId;
+    private int descendantCommentCount;
+    
+    private String extra__writer;
+    private String extra__parentMemberId;
+    private String extra__parentWriter;
     
 	public Comment(int memberId, String body, int articleId, Integer parentId, Integer originalParentId) {
 		super();

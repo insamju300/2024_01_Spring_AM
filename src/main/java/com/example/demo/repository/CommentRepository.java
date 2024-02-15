@@ -24,29 +24,6 @@ public interface CommentRepository {
     @Select("SELECT * FROM Comment WHERE id = #{id}")
     public Comment getCommentById(int id);
 
-    @Select("""
-    		<script>
-    		   SELECT * FROM Comment 
-    		       WHERE articleId = #{articleId}
-    		             AND parentId IS NULL
-    		       <if test="currentCommentId != null">
-    		             AND id &lt; #{currentCommentId}
-    		       </if>
-    		       ORDER BY id DESC LIMIT #{limit}
-    		</script>
-    		""")
-    public List<Comment> getRecentCommentsWithoutParentId(int articleId, int limit, Integer currentCommentId);
-
-    @Select("""
-    		<script>
-    		SELECT c.* FROM Comment c JOIN Comments cp ON c.originalParentId = cp.id WHERE 
-    		<foreach collection="ids" item="id" open="(" separator="," close=")">
-              #{id}
-            </foreach>
-    		</script>
-    		
-    		""")
-    public List<Comment> getCommentsWithOriginalParentId(List<Integer> ids);
 
     // Update
     @Update("UPDATE Comment SET body = #{body}, " +
@@ -57,4 +34,52 @@ public interface CommentRepository {
     // Delete
     @Delete("DELETE FROM Comment WHERE id = #{id}")
     public void deleteComment(long id);
+
+    @Select("""
+    		<script>
+    		   	   SELECT Comment.*, member.nickname AS extra__writer 
+    		       <choose>
+	    		       <when test="originalParentId == null">
+	    		          ,Count(descendant.id) as descendantCommentCount
+    		          </when>
+    		          <otherwise>
+	    		          ,parentMember.id AS extra__parentMemberId
+	                      ,parentMember.nickname AS extra__parentWriter
+                      </otherwise>
+                  </choose>
+    		          
+    		       FROM Comment 
+		       	   INNER JOIN member
+			       ON Comment.memberId = member.id
+    		       <choose>
+	    		       <when test="originalParentId == null">		       
+					       LEFT JOIN Comment as descendant
+					       ON Comment.id = descendant.originalParentId
+			           </when>
+			           <otherwise>
+					       INNER JOIN Comment as parentComment
+					       ON Comment.parentId=parentComment.id
+				       	   INNER JOIN member as parentMember
+					       ON parentComment.memberId = parentMember.id
+					   </otherwise>			       
+			       </choose>
+    		       WHERE Comment.articleId = #{articleId}
+    		       <choose>
+	    		       <when test="originalParentId == null">
+	    		             AND Comment.originalParentId IS NULL
+	    		       </when>
+	    		       <otherwise>
+	    		             AND Comment.originalParentId = #{originalParentId}
+	    		       </otherwise>
+    		       </choose>
+    		       <if test="currentCommentId != null">
+    		             AND Comment.id &lt; #{currentCommentId}
+    		       </if>
+    		       GROUP BY Comment.id
+    		       ORDER BY Comment.id DESC LIMIT #{limit}
+    		</script>
+    """)
+	public List<Comment> getCommentList(int articleId, int limit, Integer currentCommentId, Integer originalParentId);
+
+
 }

@@ -34,11 +34,13 @@ public class CommentService {
 	}
 
 
-	public List<Comment> getRecentCommentsWithoutParentId(int articleId, int limit, Integer currentCommentId) {
+	public List<Comment> getRecentCommentsWithoutParentId(int articleId, int limit, Integer currentCommentId, Integer originalParentId) {
 		// TODO Auto-generated method stub
-		return commentRepository.getRecentCommentsWithoutParentId(articleId, limit, currentCommentId);
+		return commentRepository.getCommentList(articleId, limit, currentCommentId, originalParentId);
 	}
-	
+
+
+
 //	public CommentService(ArticleRepository articleRepository) {
 //		this.articleRepository = articleRepository;
 //	}

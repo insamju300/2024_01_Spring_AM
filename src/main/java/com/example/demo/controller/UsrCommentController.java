@@ -25,7 +25,7 @@ public class UsrCommentController {
 	
 	@Autowired
 	CommentService commentService;
-	
+	final int limit = 10;
 	
 	@PostMapping("/usr/comment/doWrite")
 	@ResponseBody
@@ -58,11 +58,14 @@ public class UsrCommentController {
 	@RequestMapping("/usr/comment/list")
 	@ResponseBody
 	public List<Comment> showList(int articleId,
-			@RequestParam(required = false) Integer  currentCommentId) {
+			@RequestParam(required = false) Integer  currentCommentId,
+			@RequestParam(required = false) Integer  originalParentId) {
 		System.err.println("여기까진 잘 왔음" + articleId + "," + Ut.isEmpty(currentCommentId));
 		//일단은 limit 10개만 받아서 그대로 return 하기
-		int limit = 10;
-		List<Comment> comments =  commentService.getRecentCommentsWithoutParentId(articleId, limit, currentCommentId);	
+		
+		List<Comment> comments =  commentService.getRecentCommentsWithoutParentId(articleId, limit, currentCommentId, originalParentId);	
 		return comments;
 	}
+	
+
 }

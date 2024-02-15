@@ -35,15 +35,22 @@ public interface ArticleRepository {
 
 	@Select("""
 			<script>
-				SELECT A.*, M.nickname AS extra__writer
-				FROM article AS A
-				INNER JOIN `member` AS M
-				ON A.memberId = M.id
-				WHERE A.id = #{id}
-				GROUP BY A.id
+			SELECT A.*, M.nickname AS extra__writer
+			, COUNT(L.id) AS likesCount
+			<if test="memberId != 0">
+		    , (SELECT COUNT(1) FROM LIKES WHERE articleId= #{id} AND memberId= #{memberId}) AS likes
+			, (SELECT COUNT(1) FROM HATES WHERE articleId= #{id} AND memberId=#{memberId}) AS hates
+			</if>
+			FROM article AS A
+			INNER JOIN `member` AS M
+			ON A.memberId = M.id
+			LEFT OUTER JOIN likes L
+			ON A.id = L.articleId
+			WHERE A.id = #{id}
+			GROUP BY A.id
 			</script>
 				""")
-	public Article getForPrintArticle(int id);
+	public Article getForPrintArticle(int memberId, int id);
 
 	@Delete("DELETE FROM article WHERE id = #{id}")
 	public void deleteArticle(int id);
@@ -126,8 +133,7 @@ public interface ArticleRepository {
 
 	@Select("""
 			<script>
-			SELECT A.*,
-			M.nickname AS extra__writer
+			SELECT A.*, M.nickname AS extra__writer
 			FROM article AS A
 			INNER JOIN `member` AS M
 			ON A.memberId = M.id
@@ -149,7 +155,6 @@ public interface ArticleRepository {
 					</otherwise>
 				</choose>
 			</if>
-			GROUP BY A.id
 			ORDER BY A.id DESC
 			<if test="limitFrom >= 0 ">
 				LIMIT #{limitFrom}, #{limitTake}
@@ -158,12 +163,5 @@ public interface ArticleRepository {
 			""")
 	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String searchKeywordTypeCode,
 			String searchKeyword);
-
-	@Update("""
-			UPDATE article
-			SET goodReactionPoint = goodReactionPoint + 1
-			WHERE id = #{relId}
-			""")
-	public int increaseGoodReactionPoint(int relId);
 
 }

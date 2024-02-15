@@ -5,86 +5,113 @@
 
 <!-- <iframe src="http://localhost:8081/usr/article/doIncreaseHitCountRd?id=372" frameborder="0"></iframe> -->
 
-
-<script>
-	const params = {};
-	params.id = parseInt('${param.id}');
-</script>
-
-<script>
-	function ArticleDetail__doIncreaseHitCount() {
-		const localStorageKey = 'article__' + params.id + '__alreadyView';
-
-		if (localStorage.getItem(localStorageKey)) {
-			return;
-		}
-
-		localStorage.setItem(localStorageKey, true);
-
-		$.get('../article/doIncreaseHitCountRd', {
-			id : params.id,
-			ajaxMode : 'Y'
-		}, function(data) {
-			$('.article-detail__hit-count').empty().html(data.data1);
-		}, 'json');
-	}
-
-	$(function() {
-		// 		ArticleDetail__doIncreaseHitCount();
-		setTimeout(ArticleDetail__doIncreaseHitCount, 2000);
-	});
-</script>
-
 <section class="mt-8 text-xl px-4">
 	<div class="mx-auto">
-		<table class="table-box-1" border="1">
-			<tbody>
-				<tr>
-					<th>번호</th>
-					<td>${article.id }</td>
-				</tr>
-				<tr>
-					<th>작성날짜</th>
-					<td>${article.regDate }</td>
-				</tr>
-				<tr>
-					<th>수정날짜</th>
-					<td>${article.updateDate }</td>
-				</tr>
-				<tr>
-					<th>작성자</th>
-					<td>${article.extra__writer }</td>
-				</tr>
-				<tr>
-					<th class="reaction">좋아요</th>
-					<td>${article.goodReactionPoint }</td>
-				</tr>
-				<tr>
-					<th>싫어요</th>
-					<td>${article.badReactionPoint }</td>
-				</tr>
-				<tr>
-					<th>추천 ${usersReaction }</th>
-					<td><a
-							href="/usr/reactionPoint/doGoodReaction?relTypeCode=article&relId=${param.id }&replaceUri=${rq.currentUri}"
-							class="reaction btn btn-outline btn-success">좋아요</a> &nbsp;&nbsp; <a href="/usr/reactionPoint/doBadReaction"
-							class="reaction btn btn-outline btn-error">싫어요</a></td>
-				</tr>
-				<tr>
-					<th>조회수</th>
-					<td><span class="article-detail__hit-count">${article.hitCount }</span></td>
-				</tr>
-				<tr>
-					<th>제목</th>
-					<td>${article.title }</td>
-				</tr>
-				<tr>
-					<th>내용</th>
-					<td>${article.body }</td>
-				</tr>
+		<div class="flex">
+			<table class="table-box-1" border="1">
+				<tbody>
+					<tr>
+						<th>번호</th>
+						<td>${article.id }</td>
+					</tr>
+					<tr>
+						<th>작성날짜</th>
+						<td>${article.regDate }</td>
+					</tr>
+					<tr>
+						<th>수정날짜</th>
+						<td>${article.updateDate }</td>
+					</tr>
+					<tr>
+						<th>작성자</th>
+						<td>${article.extra__writer }</td>
+					</tr>
+					<tr>
+						<th>제목</th>
+						<td>${article.title }</td>
+					</tr>
 
-			</tbody>
-		</table>
+
+					<tr>
+						<th>테스트</th>
+						<td>
+							<button onclick="test()">테스트</button>
+						</td>
+					</tr>
+
+
+					<tr>
+						<th>좋아요</th>
+						<td>
+							<button onclick="toggleLike()" class="like ${article.likes? 'text-red-600' : 'text-gray-400' }">
+								<i class="fa-solid fa-heart"></i>
+							</button>
+							<p class="likesCount">${article.likesCount }</p>
+						</td>
+					</tr>
+					<tr>
+						<th>싫어요</th>
+						<td>
+							<button onclick="toggleHate()" class="hate ${article.hates? 'text-purple-700' : 'text-gray-400' }">
+								<i class="fa-solid fa-hand-middle-finger"></i>
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<th>내용</th>
+						<td>${article.body }</td>
+					</tr>
+					<tr>
+						<th>조회수</th>
+						<td><span class="article-detail__hit-count">${article.hitCount }</span></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<table class="table-box-1" border="1">
+				<tbody>
+					<tr>
+						<th>번호</th>
+						<td>${article.id }</td>
+					</tr>
+					<tr>
+						<th>작성날짜</th>
+						<td>${article.regDate }</td>
+					</tr>
+					<tr>
+						<th>수정날짜</th>
+						<td>${article.updateDate }</td>
+					</tr>
+					<tr>
+						<th>작성자</th>
+						<td>${article.extra__writer }</td>
+					</tr>
+					<tr>
+						<th>제목</th>
+						<td>${article.title }</td>
+					</tr>
+
+					<tr>
+						<th>좋아요</th>
+						<td>
+							<button onclick="toggleLikeOnly()" class="like ${article.likes? 'text-red-600' : 'text-gray-400' }">
+								<i class="fa-solid fa-heart"></i>
+							</button>
+							<p class="likesCount">${article.likesCount }</p>
+						</td>
+					</tr>
+					<tr>
+						<th>내용</th>
+						<td>${article.body }</td>
+					</tr>
+					<tr>
+						<th>조회수</th>
+						<td><span class="article-detail__hit-count">${article.hitCount }</span></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
 		<div class="btns mt-5">
 			<button class="btn btn-outline" type="button" onclick="history.back();">뒤로가기</button>
 			<c:if test="${article.userCanModify }">
@@ -98,6 +125,203 @@
 	</div>
 </section>
 
+<section>
+	<c:if test="${rq.isLogined() }">
+		<form action="../comment/doWrite" method="POST">
+			<input type="hidden" name="articleId" value="${article.id }">
+			<div class="bg-white p-4 rounded shadow">
+				<div class="flex flex-col">
 
+					<h3 class="font-semibold">${rq.loginedMemberNicname }</h3>
+					<input type="text" name="body"
+						class="mt-1 w-96 border-b-2 border-gray-300 border-solid focus:outline-none focus:border-black" />
+					<div></div>
+					<button class="w-20 mt-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
+
+				</div>
+			</div>
+		</form>
+	</c:if>
+	<div id="commentsGroup">
+		<div class="chat chat-start">
+			<div class="chat-header">
+				UserName
+				<time class="text-xs opacity-50">2 hours ago</time>
+			</div>
+			<div class="chat-bubble">You were the Chosen One!</div>
+		</div>
+	</div>
+</section>
+<script>
+const params = {};
+params.id = parseInt('${param.id}');
+let localStorageName = 'isAlreadyHit' + params.id;
+
+function ArticleDetail__doIncreaseHitCount() {
+	$.get('../article/doIncreaseHitCountRd', {
+		id : params.id,
+		ajaxMode : 'Y'
+	}, function(data) {
+		$('.article-detail__hit-count').empty().html(data.data1);
+	}, 'json');
+
+	localStorage.setItem(localStorageName, true);
+}
+
+$(function() {
+	console.log('isAlreadyHit' + params.id);
+	if (!localStorage.getItem(localStorageName)) {
+		ArticleDetail__doIncreaseHitCount();
+		// 		setTimeout(ArticleDetail__doIncreaseHitCount, 2000);
+	}
+})
+
+function loginCheck() {
+	var loginCheck = "${rq.isLogined() }";
+	if (loginCheck == "false") {
+		alert("로그인 후 이용할 수 있습니다.");
+		return false;
+	}
+	var loginMemberId = "${rq.loginedMemberId }";
+	var articleMemberId = "${article.memberId}"
+	
+	if(loginMemberId == articleMemberId){
+		alert("본인의 글에는 좋아요나 싫어요를 누를 수 없습니다.")
+		return false;
+	}
+
+	return true;
+}
+
+function toggleLikeOnly(){
+	if (!loginCheck()) {
+		return;
+	}
+	
+	$.get('../preferance/toggleLikeOnly', {
+		id : params.id
+	}, function(data) {
+		console.log(data);
+		if (data.likes) {
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-red-600'));
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-gray-400'));
+		} else {
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-gray-400'));
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-red-600'));
+		}
+		$('.likesCount').empty().html(data.likesCount);
+
+	}, 'json');
+}
+
+function toggleLike() {
+	if (!loginCheck()) {
+		return;
+	}
+
+	$.get('../preferance/toggleLike', {
+		id : params.id
+	}, function(data) {
+		console.log(data);
+		if (data.likes) {
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-red-600'));
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-gray-400'));
+		} else {
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-gray-400'));
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-red-600'));
+		}
+		if (data.hates) {
+			Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.add('text-purple-700'));
+			Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.remove('text-gray-400'));
+		} else {
+			Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.add('text-gray-400'));
+			Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.remove('text-purple-700'));
+		}
+		$('.likesCount').empty().html(data.likesCount);
+
+	}, 'json');
+
+}
+
+function toggleHate() {
+	if (!loginCheck()) {
+		return;
+	}
+	loginCheck();
+	$.get('../preferance/toggleHate', {
+		id : params.id
+	}, function(data) {
+		console.log(data);
+		if (data.likes) {
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-red-600'));
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-gray-400'));
+		} else {
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.add('text-gray-400'));
+			Array.from(document.getElementsByClassName("like")).forEach((element) =>element.classList.remove('text-red-600'));
+		}
+		if (data.hates) {
+			Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.add('text-purple-700'));
+			Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.remove('text-gray-400'));
+		} else {
+			Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.add('text-gray-400'));
+			Array.from(document.getElementsByClassName("hate")).forEach((element) =>element.classList.remove('text-purple-700'));
+		}
+		$('.likesCount').empty().html(data.likesCount);
+	}, 'json');
+
+}
+
+
+
+
+
+function loadMoreComment(articleId, currentCommentId) {
+	$.get('../comment/list', {
+		articleId : articleId,
+		currentCommentId : currentCommentId
+	}, function(comments) {
+		$.each(comments, function(index, comment) {
+			appendComment(comment);
+		});
+
+	
+	}, 'json');
+}
+
+
+function appendComment(comment){
+	  const tmp = document.createElement("div");
+	  tmp.innerHTML = `
+	  <div data-id="`+comment.id+`" class="chat chat-start">
+			<div class="chat-header">`
+			+comment.memberId+`
+			<time class="text-xs opacity-50">`+comment.regDate+`</time>
+		</div>
+		<div class="chat-bubble">`+comment.body+`</div>
+	</div>`;
+	  
+	  document.querySelector("#commentsGroup").append(tmp);
+	
+}
+
+loadMoreComment("${article.id }", null);
+
+//스크롤 이벤트 처리
+// Event listener for the scroll event
+window.addEventListener('scroll', () => {
+  if (isScrollAtBottom()) {
+	const lastComment = document.getElementById("commentsGroup").lastChild;
+	if(lastComment!=null){
+        alert(lastComment.getAttribute( "data-id" ).val());
+	}
+  }
+});
+
+function isScrollAtBottom() {
+	  const totalPageHeight = document.body.scrollHeight;
+	  const scrollPoint = window.scrollY + window.innerHeight;
+	  return scrollPoint >= totalPageHeight;
+}
+</script>
 
 <%@ include file="../common/foot.jspf"%>

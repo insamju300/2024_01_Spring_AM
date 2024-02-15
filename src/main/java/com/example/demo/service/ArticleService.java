@@ -22,7 +22,7 @@ public class ArticleService {
 
 	// 서비스 메서드
 	public Article getForPrintArticle(int loginedMemberId, int id) {
-		Article article = articleRepository.getForPrintArticle(id);
+		Article article = articleRepository.getForPrintArticle(loginedMemberId, id);
 
 		controlForPrintData(loginedMemberId, article);
 
@@ -116,16 +116,6 @@ public class ArticleService {
 
 		return articleRepository.getForPrintArticles(boardId, limitFrom, limitTake, searchKeywordTypeCode,
 				searchKeyword);
-	}
-
-	public ResultData increaseGoodReactionPoint(int relId) {
-		int affectedRow = articleRepository.increaseGoodReactionPoint(relId);
-
-		if (affectedRow == 0) {
-			return ResultData.from("F-1", "없는 게시물");
-		}
-
-		return ResultData.from(null, null);
 	}
 
 }

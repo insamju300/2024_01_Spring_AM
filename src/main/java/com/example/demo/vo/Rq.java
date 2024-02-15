@@ -20,6 +20,8 @@ public class Rq {
 	private boolean isLogined;
 	@Getter
 	private int loginedMemberId;
+	@Getter
+	private String loginedMemberNicname;
 
 	private HttpSession session;
 
@@ -36,6 +38,7 @@ public class Rq {
 		if (httpSession.getAttribute("loginedMemberId") != null) {
 			isLogined = true;
 			loginedMemberId = (int) httpSession.getAttribute("loginedMemberId");
+			loginedMemberNicname=(String)httpSession.getAttribute("loginedMemberNicname");
 		}
 
 		this.req.setAttribute("rq", this);
@@ -66,14 +69,22 @@ public class Rq {
 
 	public void logout() {
 		session.removeAttribute("loginedMemberId");
+		session.removeAttribute("loginedMemberNicname");
 	}
 
 	public void login(Member member) {
 		session.setAttribute("loginedMemberId", member.getId());
+		session.setAttribute("loginedMemberNicname", member.getNickname());
 	}
 
 	public void initBeforeActionInterceptor() {
 
+	}
+
+	public String historyBackOnView(String msg) {
+		req.setAttribute("msg", msg);
+		req.setAttribute("historyBack", true);
+		return "usr/common/js";
 	}
 
 }

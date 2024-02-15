@@ -34,13 +34,23 @@ public interface ArticleRepository {
 	public Article getArticle(int id);
 
 	@Select("""
+			<script>
 			SELECT A.*, M.nickname AS extra__writer
+			, COUNT(L.id) AS likesCount
+			<if test="memberId != 0">
+		    , (SELECT COUNT(1) FROM LIKES WHERE articleId= #{id} AND memberId= #{memberId}) AS likes
+			, (SELECT COUNT(1) FROM HATES WHERE articleId= #{id} AND memberId=#{memberId}) AS hates
+			</if>
 			FROM article AS A
 			INNER JOIN `member` AS M
 			ON A.memberId = M.id
+			LEFT OUTER JOIN likes L
+			ON A.id = L.articleId
 			WHERE A.id = #{id}
+			GROUP BY A.id
+			</script>
 				""")
-	public Article getForPrintArticle(int id);
+	public Article getForPrintArticle(int memberId, int id);
 
 	@Delete("DELETE FROM article WHERE id = #{id}")
 	public void deleteArticle(int id);
@@ -65,14 +75,93 @@ public interface ArticleRepository {
 			""")
 	public List<Article> getArticles();
 
+//	@Select("""
+//			<script>
+//			SELECT A.*, M.nickname AS extra__writer
+//			FROM article AS A
+//			INNER JOIN `member` AS M
+//			ON A.memberId = M.id
+//			WHERE 1
+//			<if test="boardId != 0">
+//				AND A.boardId = #{boardId}
+//			</if>
+//			ORDER BY A.id DESC
+//			</script>
+//			""")
+//	public List<Article> getForPrintArticles(int boardId);
+
 	@Select("""
+			<script>
+			SELECT COUNT(*) AS cnt
+			FROM article AS A
+			WHERE 1
+			<if test="boardId != 0">
+				AND boardId = #{boardId}
+			</if>
+			<if test="searchKeyword != ''">
+				<choose>
+					<when test="searchKeywordTypeCode == 'title'">
+						AND A.title LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchKeywordTypeCode == 'body'">
+						AND A.body LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>
+					<otherwise>
+						AND A.title LIKE CONCAT('%',#{searchKeyword},'%')
+						OR A.body LIKE CONCAT('%',#{searchKeyword},'%')
+					</otherwise>
+				</choose>
+			</if>
+			ORDER BY id DESC
+			</script>
+			""")
+	public int getArticlesCount(int boardId, String searchKeywordTypeCode, String searchKeyword);
+
+	@Update("""
+			UPDATE article
+			SET hitCount = hitCount + 1
+			WHERE id = #{id}
+			""")
+	public int increaseHitCount(int id);
+
+	@Select("""
+			SELECT hitCount
+			FROM article
+			WHERE id = #{id}
+			""")
+	public int getArticleHitCount(int id);
+
+	@Select("""
+			<script>
 			SELECT A.*, M.nickname AS extra__writer
 			FROM article AS A
 			INNER JOIN `member` AS M
 			ON A.memberId = M.id
-			WHERE boardId = #{boardId}
+			WHERE 1
+			<if test="boardId != 0">
+				AND A.boardId = #{boardId}
+			</if>
+			<if test="searchKeyword != ''">
+				<choose>
+					<when test="searchKeywordTypeCode == 'title'">
+						AND A.title LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchKeywordTypeCode == 'body'">
+						AND A.body LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>
+					<otherwise>
+						AND A.title LIKE CONCAT('%',#{searchKeyword},'%')
+						OR A.body LIKE CONCAT('%',#{searchKeyword},'%')
+					</otherwise>
+				</choose>
+			</if>
 			ORDER BY A.id DESC
+			<if test="limitFrom >= 0 ">
+				LIMIT #{limitFrom}, #{limitTake}
+			</if>
+			</script>
 			""")
-	public List<Article> getForPrintArticles(int boardId);
+	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String searchKeywordTypeCode,
+			String searchKeyword);
 
 }

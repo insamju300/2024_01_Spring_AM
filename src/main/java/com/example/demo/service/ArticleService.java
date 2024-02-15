@@ -22,7 +22,7 @@ public class ArticleService {
 
 	// 서비스 메서드
 	public Article getForPrintArticle(int loginedMemberId, int id) {
-		Article article = articleRepository.getForPrintArticle(id);
+		Article article = articleRepository.getForPrintArticle(loginedMemberId, id);
 
 		controlForPrintData(loginedMemberId, article);
 
@@ -82,8 +82,40 @@ public class ArticleService {
 		return articleRepository.getArticles();
 	}
 
-	public List<Article> getForPrintArticles(int boardId) {
-		return articleRepository.getForPrintArticles(boardId);
+	public int getArticlesCount(int boardId, String searchKeywordTypeCode, String searchKeyword) {
+		return articleRepository.getArticlesCount(boardId, searchKeywordTypeCode, searchKeyword);
+	}
+//
+//	public List<Article> getForPrintArticles(int boardId) {
+//		return articleRepository.getForPrintArticles(boardId);
+//	}
+
+	public ResultData increaseHitCount(int id) {
+		int affectedRow = articleRepository.increaseHitCount(id);
+
+		if (affectedRow == 0) {
+			return ResultData.from("F-1", "해당 게시물 없음", "id", id);
+		}
+
+		return ResultData.from("S-1", "해당 게시물 조회수 증가", "id", id);
+
+	}
+
+	public Object getArticleHitCount(int id) {
+		return articleRepository.getArticleHitCount(id);
+	}
+
+	public List<Article> getForPrintArticles(int boardId, int itemsInAPage, int page, String searchKeywordTypeCode,
+			String searchKeyword) {
+
+//		SELECT * FROM article WHERE boardId = 1 ORDER BY id DESC LIMIT 0, 10; 1page
+//		SELECT * FROM article WHERE boardId = 1 ORDER BY id DESC LIMIT 10, 10; 2page
+
+		int limitFrom = (page - 1) * itemsInAPage;
+		int limitTake = itemsInAPage;
+
+		return articleRepository.getForPrintArticles(boardId, limitFrom, limitTake, searchKeywordTypeCode,
+				searchKeyword);
 	}
 
 }

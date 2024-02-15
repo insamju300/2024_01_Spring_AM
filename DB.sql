@@ -114,19 +114,19 @@ CREATE TABLE board(
 INSERT INTO board
 SET regDate = NOW(),
 updateDate = NOW(),
-`code` = 'notice',
+`code` = 'NOTICE',
 `name` = '공지사항';
 
 INSERT INTO board
 SET regDate = NOW(),
 updateDate = NOW(),
-`code` = 'free',
+`code` = 'FREE',
 `name` = '자유';
 
 INSERT INTO board
 SET regDate = NOW(),
 updateDate = NOW(),
-`code` = 'qna',
+`code` = 'QnA',
 `name` = '질의응답';
 
 ALTER TABLE article ADD COLUMN boardId INT(10) UNSIGNED NOT NULL AFTER `memberId`;
@@ -143,7 +143,33 @@ UPDATE article
 SET boardId = 3
 WHERE id = 4;
 
+ALTER TABLE article ADD COLUMN hitCount INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `body`;
+
 ###############################################
+
+INSERT INTO article
+(
+    regDate, updateDate, memberId, boardId, title, `body`
+)
+SELECT NOW(),NOW(), FLOOR(RAND() * 2) + 2, FLOOR(RAND() * 3) + 1, CONCAT('제목_',RAND()), CONCAT('내용_',RAND())
+FROM article;
+
+UPDATE article 
+SET title = '제목5'
+WHERE id = 5;
+
+UPDATE article 
+SET title = '제목11'
+WHERE id = 6;
+
+UPDATE article 
+SET title = '제목45'
+WHERE id = 7;
+
+SELECT FLOOR(RAND() * 2) + 2
+
+SELECT FLOOR(RAND() * 3) + 1
+
 
 SHOW FULL COLUMNS FROM `member`;
 DESC `member`;
@@ -158,3 +184,30 @@ SELECT *
 FROM `board`;
 
 SELECT LAST_INSERT_ID();
+
+
+DROP TABLE likes;
+CREATE TABLE LIKES(
+    id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    articleId INT(10) UNSIGNED NOT NULL,
+    memberId INT(10) UNSIGNED NOT NULL
+)
+
+DROP TABLE HATES;
+CREATE TABLE HATES(
+    id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    articleId INT(10) UNSIGNED NOT NULL,
+    memberId INT(10) UNSIGNED NOT NULL
+)
+
+
+CREATE TABLE `Comment` (
+    id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    memberId INT(10) UNSIGNED NOT NULL,
+    `body` TEXT NOT NULL,
+    regDate DATETIME NOT NULL,
+    updateDate DATETIME NOT NULL,
+    articleId INT(10) UNSIGNED NOT NULL,
+    parentId INT UNSIGNED,
+    originalParentId INT UNSIGNED
+);

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.BoardService;
+import com.example.demo.service.ReactionPointService;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
 import com.example.demo.vo.Board;
@@ -30,6 +31,9 @@ public class UsrArticleController {
 
 	@Autowired
 	private BoardService boardService;
+
+	@Autowired
+	private ReactionPointService reactionPointService;
 
 	public UsrArticleController() {
 
@@ -81,7 +85,11 @@ public class UsrArticleController {
 
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
+		// -1 싫어요, 0 표현 x, 1 좋아요
+		int usersReaction = reactionPointService.usersReaction(rq.getLoginedMemberId(), "article", id);
+
 		model.addAttribute("article", article);
+		model.addAttribute("usersReaction", usersReaction);
 
 		return "usr/article/detail";
 	}

@@ -35,15 +35,10 @@ public interface ArticleRepository {
 
 	@Select("""
 			<script>
-				SELECT A.*, M.nickname AS extra__writer,
-				IFNULL(SUM(RP.point),0) AS extra__sumReactionPoint,
-				IFNULL(SUM(IF(RP.point &gt; 0, RP.point, 0)),0) AS extra__goodReactionPoint,
-				IFNULL(SUM(IF(RP.point &lt; 0, RP.point, 0)),0) AS extra__badReactionPoint
+				SELECT A.*, M.nickname AS extra__writer
 				FROM article AS A
 				INNER JOIN `member` AS M
 				ON A.memberId = M.id
-				LEFT JOIN reactionPoint AS RP
-				ON A.id = RP.relId AND RP.relTypeCode = 'article'
 				WHERE A.id = #{id}
 				GROUP BY A.id
 			</script>
@@ -132,14 +127,10 @@ public interface ArticleRepository {
 	@Select("""
 			<script>
 			SELECT A.*,
-			IFNULL(SUM(RP.point),0) AS extra__sumReactionPoint,
-			IFNULL(SUM(IF(RP.point &gt; 0, RP.point, 0)),0) AS extra__goodReactionPoint,
-			IFNULL(SUM(IF(RP.point &lt; 0, RP.point, 0)),0) AS extra__badReactionPoint, M.nickname AS extra__writer
+			M.nickname AS extra__writer
 			FROM article AS A
 			INNER JOIN `member` AS M
 			ON A.memberId = M.id
-			LEFT JOIN reactionPoint AS RP
-			ON A.id = RP.relId AND RP.relTypeCode = 'article'
 			WHERE 1
 			<if test="boardId != 0">
 				AND A.boardId = #{boardId}
@@ -167,22 +158,5 @@ public interface ArticleRepository {
 			""")
 	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String searchKeywordTypeCode,
 			String searchKeyword);
-
-	@Update("""
-			UPDATE article AS A
-			INNER JOIN (
-			    SELECT RP.relTypeCode,RP.relId,
-			    SUM(IF(RP.point > 0, RP.point, 0)) AS goodReactionPoint,
-			    SUM(IF(RP.point < 0, RP.point * -1, 0)) AS badReactionPoint
-			    FROM reactionPoint AS RP
-			    WHERE RP.relID = #{relId} 
-			    AND RP.relTypeCode = #{relTypeCode}
-			    GROUP BY RP.relTypeCode, RP.relId
-			) AS RP_SUM
-			ON A.id = RP_SUM.relId
-			SET A.goodReactionPoint = RP_SUM.goodReactionPoint,
-			A.badReactionPoint = RP_SUM.badReactionPoint;
-						""")
-	public void updateJoinReationPoints(int relId, String relTypeCode);
 
 }

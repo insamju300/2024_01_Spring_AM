@@ -55,15 +55,15 @@
 				</tr>
 				<tr>
 					<th>좋아요</th>
-					<td>${article.extra__goodReactionPoint }</td>
+					<td>${article.goodReactionPoint }</td>
 				</tr>
 				<tr>
 					<th>싫어요</th>
-					<td>${article.extra__badReactionPoint }</td>
+					<td>${article.badReactionPoint }</td>
 				</tr>
 				<tr>
-					<th>추천 합</th>
-					<td>${article.extra__sumReactionPoint }</td>
+					<th>추천</th>
+					<td><span class="btn btn-outline btn-success">좋아요</span>&nbsp;&nbsp;<span class="btn btn-outline btn-error">싫어요</span></td>
 				</tr>
 				<tr>
 					<th>조회수</th>

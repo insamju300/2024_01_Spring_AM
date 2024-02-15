@@ -4,27 +4,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.repository.ReactionPointRepository;
-import com.example.demo.vo.ReactionPoint;
 
 @Service
 public class ReactionPointService {
-	
+
 	@Autowired
-	ReactionPointRepository reactionPointRepository;
+	private ReactionPointRepository reactionPointRepository;
 
-	public ReactionPoint getReactionPointByMemberIdAndRelId(int memberId, int relId, String relTypeCode) {
-		// TODO Auto-generated method stub
-		return reactionPointRepository.getReactionPointByMemberIdAndRelId(memberId, relId, relTypeCode);
+	public ReactionPointService(ReactionPointRepository reactionPointRepository) {
+		this.reactionPointRepository = reactionPointRepository;
 	}
 
-	public void insertReactionPoint(ReactionPoint reactionPoint) {
-		// TODO Auto-generated method stub
-		reactionPointRepository.insertReactionPoint(reactionPoint);
-	}
+	public int usersReaction(int loginedMemberId, String relTypeCode, int relId) {
+		
+		// 로그인 x
+		if (loginedMemberId == 0) {
+			return -2;
+		}
 
-	public void updateReactionPoint(int point, int id) {
-		// TODO Auto-generated method stub
-		reactionPointRepository.updateReactionPoint(point, id);
+		return reactionPointRepository.getSumReactionPoint(loginedMemberId, relTypeCode, relId);
 	}
 
 }

@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="pageTitle" value="ARTICLE DETAIL"></c:set>
 <%@ include file="../common/head.jspf"%>
@@ -44,8 +43,7 @@
 					<tr>
 						<th>좋아요</th>
 						<td>
-							<button onclick="toggleLike()"
-								class="like ${article.likes? 'text-red-600' : 'text-gray-400' }">
+							<button onclick="toggleLike()" class="like ${article.likes? 'text-red-600' : 'text-gray-400' }">
 								<i class="fa-solid fa-heart"></i>
 							</button>
 							<p class="likesCount">${article.likesCount }</p>
@@ -54,8 +52,7 @@
 					<tr>
 						<th>싫어요</th>
 						<td>
-							<button onclick="toggleHate()"
-								class="hate ${article.hates? 'text-purple-700' : 'text-gray-400' }">
+							<button onclick="toggleHate()" class="hate ${article.hates? 'text-purple-700' : 'text-gray-400' }">
 								<i class="fa-solid fa-hand-middle-finger"></i>
 							</button>
 						</td>
@@ -66,9 +63,7 @@
 					</tr>
 					<tr>
 						<th>조회수</th>
-						<td>
-							<span class="article-detail__hit-count">${article.hitCount }</span>
-						</td>
+						<td><span class="article-detail__hit-count">${article.hitCount }</span></td>
 					</tr>
 				</tbody>
 			</table>
@@ -99,8 +94,7 @@
 					<tr>
 						<th>좋아요</th>
 						<td>
-							<button onclick="toggleLikeOnly()"
-								class="like ${article.likes? 'text-red-600' : 'text-gray-400' }">
+							<button onclick="toggleLikeOnly()" class="like ${article.likes? 'text-red-600' : 'text-gray-400' }">
 								<i class="fa-solid fa-heart"></i>
 							</button>
 							<p class="likesCount">${article.likesCount }</p>
@@ -112,24 +106,19 @@
 					</tr>
 					<tr>
 						<th>조회수</th>
-						<td>
-							<span class="article-detail__hit-count">${article.hitCount }</span>
-						</td>
+						<td><span class="article-detail__hit-count">${article.hitCount }</span></td>
 					</tr>
 				</tbody>
 			</table>
 
 		</div>
 		<div class="btns mt-5">
-			<button class="btn btn-outline" type="button"
-				onclick="history.back();">뒤로가기</button>
+			<button class="btn btn-outline" type="button" onclick="history.back();">뒤로가기</button>
 			<c:if test="${article.userCanModify }">
-				<a class="btn btn-outline"
-					href="../article/modify?id=${article.id }">수정</a>
+				<a class="btn btn-outline" href="../article/modify?id=${article.id }">수정</a>
 			</c:if>
 			<c:if test="${article.userCanDelete }">
-				<a class="btn btn-outline"
-					onclick="if(confirm('정말 삭제하시겠습니까?') == false) return false;"
+				<a class="btn btn-outline" onclick="if(confirm('정말 삭제하시겠습니까?') == false) return false;"
 					href="../article/doDelete?id=${article.id }">삭제</a>
 			</c:if>
 		</div>
@@ -147,9 +136,7 @@
 					<input type="text" name="body"
 						class="mt-1 w-96 border-b-2 border-gray-300 border-solid focus:outline-none focus:border-black" />
 					<div></div>
-					<button
-						class="w-20 mt-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글
-						달기</button>
+					<button class="w-20 mt-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
 
 				</div>
 			</div>
@@ -161,6 +148,7 @@
 const params = {};
 params.id = parseInt('${param.id}');
 let localStorageName = 'isAlreadyHit' + params.id;
+let isFirstToggle = true;
 
 function ArticleDetail__doIncreaseHitCount() {
 	$.get('../article/doIncreaseHitCountRd', {
@@ -286,7 +274,7 @@ function loadMoreComment(articleId, currentCommentId) {
 }
 
 
-function loadMoreDescendantComment(articleId, currentCommentId, originalParentId, e) {
+function loadMoreDescendantComment(articleId, currentCommentId, originalParentId, e, descendantCommentCount) {
 	$.get('../comment/list', {
 		articleId : articleId,
 		currentCommentId : currentCommentId,
@@ -295,15 +283,38 @@ function loadMoreDescendantComment(articleId, currentCommentId, originalParentId
 		$.each(comments, function(index, comment) {
 			appendDescendantComment(comment,e);
 		});
+		
+
+		//1. 현재 대댓글 갯수 가져오기.
+		//2.자식 갯수 가져오기
+		let currentChildCount = $(e).siblings(".descendantComments").find(".descendantComment").length;
+		if(descendantCommentCount>currentChildCount){
+		    const tmp = document.createElement("button");
+		    tmp.setAttribute("data-descendant-comment-count", descendantCommentCount);
+		    
+		    //마지막 자식의 id 가져오기.
+		    let lastChild = $(e).siblings(".descendantComments").find(".descendantComment:last-child");
+		    let lastChildId = lastChild.attr('data-id');
+		    
+		    tmp.setAttribute("onclick", "deleteTest(this)");
+
+			tmp.innerHTML=`대댓글 갯수${"${descendantCommentCount}"}  현재 보여주고있는 대댓글 갯수 ${"${currentChildCount}"}  마지막 대댓글${"${lastChildId}"}`;
+			$(e).siblings(".descendantComments").append(tmp);
+		}
+		
 
 	
 	}, 'json');
 }
 
+function deleteTest(e){
+	$(e).remove();
+}
+
 
 function appendDescendantComment(comment,e){
 	   const tmp = document.createElement("div");
-	    tmp.setAttribute("class", "chat chat-start");
+	    tmp.setAttribute("class", "chat chat-start descendantComment");
 	    tmp.setAttribute("data-id", comment.id);
 	    let tmpInnerHTML = `
 	        <div class= "flex flex-col">
@@ -346,11 +357,25 @@ function appendDescendantComment(comment,e){
 			</div>
 			</div>
 	    `;
+
 	    
 	    tmp.innerHTML=tmpInnerHTML;
-	    $(e).siblings(".descendantComments").append(tmp)
+	    $(e).siblings(".descendantComments").append(tmp);
+	    
+	    
 }
 
+
+
+
+function toggleDescendantComment(articleId, currentCommentId, originalParentId, e, descendantCommentCount){
+	if(isFirstToggle){
+	    loadMoreDescendantComment(articleId, currentCommentId, originalParentId, e, descendantCommentCount);
+	    isFirstToggle = false;
+	}
+	
+	$(e).siblings(".descendantComments").toggle();
+}
 
 function appendComment(comment){
 	   const tmp = document.createElement("div");
@@ -367,12 +392,13 @@ function appendComment(comment){
 	        <button class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200" onclick="showNextDoWriteForm(this)"> 답글달기 </button>
 	        `;
 	     if(comment.descendantCommentCount!=0){
-	        tmpInnerHTML += `<button class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200"
-	        onclick="loadMoreDescendantComment(${article.id}, null,${'${comment.id },this'})"> ▼답글 ${"${comment.descendantCommentCount}"}개</button>
-	        <div class="descendantComments pl-10">
+	        tmpInnerHTML += `<button
+	        class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200"
+	        onclick="toggleDescendantComment(${article.id}, null,${'${comment.id }'},this,${'${comment.descendantCommentCount }'})"> ▼답글 ${"${comment.descendantCommentCount}"}개</button>
+	        <div class="descendantComments pl-10 hidden">
 	        </div>
 	        `;
-	        }
+	     }
 	        
 	     tmpInnerHTML += `
 	        <div class="hidden doWriteForm">

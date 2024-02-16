@@ -83,5 +83,20 @@ public class UsrCommentController {
 		Comment comment = commentService.findCommentById(id);	
 		return ResultData.from("S-1", String.format("%s번 게시글이 수정되었습니다.", id), "comment", comment);
 	}
+	
+	@RequestMapping("/usr/comment/doDelete")
+	public ResultData<Integer> doDelete(HttpServletRequest req,int id) {
+		
+		Rq rq = (Rq) req.getAttribute("rq");
+		
+		// 에러 체크. 해당 게시글이 있는지, 삭제권한이 있는지, 자식 댓글이 있는지. 자식 댓글이 있으면 어케처리?
+		
+		//일단 삭제하고 돌려주기. 에러처리는 나중에
+		int effactedRows = commentService.doDelete(id);
+		
+		//갱신후 새 커멘트 받아와서 돌려주기
+		Comment comment = commentService.findCommentById(id);	
+		return ResultData.from("S-1", String.format("%s번 게시글이 삭제 되었습니다.", id), "id", id);
+	}
 
 }

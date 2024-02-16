@@ -65,6 +65,12 @@ public class CommentService {
 	}
 
 
+	public int doDelete(int id) {
+		// TODO Auto-generated method stub
+		return commentRepository.deleteComment(id);
+	}
+
+
 
 
 

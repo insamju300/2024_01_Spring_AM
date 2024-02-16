@@ -27,7 +27,7 @@ public interface CommentRepository {
 
     // Delete
     @Delete("DELETE FROM Comment WHERE id = #{id}")
-    public void deleteComment(long id);
+    public int deleteComment(int id);
 
     @Select("""
     		<script>

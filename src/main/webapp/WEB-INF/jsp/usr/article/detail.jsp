@@ -359,7 +359,10 @@ function appendDescendantComment(comment,e){
 		        		 </div>
 	        		 </form>
         		 </div>
-        		 <button onclick='toggleChatBubble(this)' class="showModifyButton w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">수정</button>
+        		 <div class="flex">
+      		       <button onclick='toggleChatBubble(this)' class="showModifyButton w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">수정</button>
+      		       <button onclick='doCommentDelete(this, ${"${comment.id}"})' class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">삭제</button>
+      		     </div>
         		 `;
         	 }
         	 
@@ -430,6 +433,20 @@ function doCommentModify(e){
 	}, 'json');
 }
 
+function doCommentDelete(e, id){
+	
+	$.post('../comment/doDelete', {
+		id : id
+	}, function(data) {
+		if(data.success==true){
+			$(e).parents(".chat")[0].remove();
+		}else{
+			alert(data.msg);
+		}
+	}, 'json');
+	
+}
+
 //댓글 화면 그리기
 function appendComment(comment){
 	   const tmp = document.createElement("div");
@@ -465,7 +482,10 @@ function appendComment(comment){
 		        		 </div>
 	        		 </form>
         		 </div>
-        		 <button onclick='toggleChatBubble(this)' class="showModifyButton w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">수정</button>
+        		 <div class="flex">
+        		   <button onclick='toggleChatBubble(this)' class="showModifyButton w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">수정</button>
+        		   <button onclick='doCommentDelete(this, ${"${comment.id}"})' class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">삭제</button>
+        		 </div>
         		 `;
         	 }
         	 

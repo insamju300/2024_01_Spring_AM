@@ -21,6 +21,7 @@ public class Comment {
     private Integer parentId;
     private Integer originalParentId;
     private int descendantCommentCount;
+    private boolean accessible;
     
     private String extra__writer;
     private String extra__parentMemberId;

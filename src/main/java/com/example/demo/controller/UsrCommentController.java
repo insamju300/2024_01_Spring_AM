@@ -3,24 +3,20 @@ package com.example.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.service.CommentService;
 import com.example.demo.util.Ut;
-import com.example.demo.vo.Article;
-import com.example.demo.vo.Board;
 import com.example.demo.vo.Comment;
 import com.example.demo.vo.ResultData;
 import com.example.demo.vo.Rq;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@Controller
+@RestController
 public class UsrCommentController {
 	
 	@Autowired
@@ -28,7 +24,6 @@ public class UsrCommentController {
 	final int limit = 10;
 	
 	@PostMapping("/usr/comment/doWrite")
-	@ResponseBody
 	public String doWrite(HttpServletRequest req, String body, int articleId, @RequestParam(required = false) Integer parentId, @RequestParam(required = false)Integer originalParentId) {
 		
 //	    @Insert("INSERT INTO Comments (memberId, body, regDate, updateDate, articleId, parentId, originalParentId) " +
@@ -56,16 +51,35 @@ public class UsrCommentController {
 	
 	
 	@RequestMapping("/usr/comment/list")
-	@ResponseBody
-	public List<Comment> showList(int articleId,
+	public List<Comment> showList(HttpServletRequest req,
+			int articleId,
 			@RequestParam(required = false) Integer  currentCommentId,
 			@RequestParam(required = false) Integer  originalParentId) {
+		Rq rq = (Rq) req.getAttribute("rq");
+		int memberId = rq.getLoginedMemberId();
 		System.err.println("여기까진 잘 왔음" + articleId + "," + Ut.isEmpty(currentCommentId));
 		//일단은 limit 10개만 받아서 그대로 return 하기
 		
-		List<Comment> comments =  commentService.getRecentCommentsWithoutParentId(articleId, limit, currentCommentId, originalParentId);	
+		List<Comment> comments =  commentService.getRecentCommentsWithoutParentId(articleId, limit, currentCommentId, originalParentId, memberId);	
 		return comments;
 	}
 	
+
+	
+	@RequestMapping("/usr/comment/doModify")
+	public ResultData<Comment> doModify(HttpServletRequest req,int id, String body) {
+		System.err.print("왜 안되냐 이거.");
+		
+		Rq rq = (Rq) req.getAttribute("rq");
+		
+		// 에러 체크. 해당 게시글이 있는지, 수정권한이 있는지.
+		
+		//일단 수정하고 돌려주기. 에러처리는 나중에
+		int effactedRows = commentService.doModify(id, body);
+		
+		//갱신후 새 커멘트 받아와서 돌려주기
+		Comment comment = commentService.findCommentById(id);	
+		return ResultData.from("S-1", String.format("%s번 게시글이 수정되었습니다.", id), "comment", comment);
+	}
 
 }

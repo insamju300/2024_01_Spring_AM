@@ -25,12 +25,6 @@ public interface CommentRepository {
     public Comment getCommentById(int id);
 
 
-    // Update
-    @Update("UPDATE Comment SET body = #{body}, " +
-            "updateDate = NOW(), " +
-            "WHERE id = #{id}")
-    public void updateComment(Comment comment);
-
     // Delete
     @Delete("DELETE FROM Comment WHERE id = #{id}")
     public void deleteComment(long id);
@@ -80,6 +74,11 @@ public interface CommentRepository {
     		</script>
     """)
 	public List<Comment> getCommentList(int articleId, int limit, Integer currentCommentId, Integer originalParentId);
+
+    @Update("UPDATE Comment SET body = #{body}, " +
+            "updateDate = NOW() " +
+            "WHERE id = #{id}")
+	public int updateComment(int id, String body);
 
 
 }

@@ -34,10 +34,32 @@ public class CommentService {
 	}
 
 
-	public List<Comment> getRecentCommentsWithoutParentId(int articleId, int limit, Integer currentCommentId, Integer originalParentId) {
+	public List<Comment> getRecentCommentsWithoutParentId(int articleId, int limit, Integer currentCommentId, Integer originalParentId, int memberId) {
 		// TODO Auto-generated method stub
-		return commentRepository.getCommentList(articleId, limit, currentCommentId, originalParentId);
+		List<Comment> result = commentRepository.getCommentList(articleId, limit, currentCommentId, originalParentId);
+		
+		result.forEach(comment->{
+			if(memberId!=0 && memberId==comment.getMemberId()) {
+				comment.setAccessible(true);
+			}
+		});
+		return result; 
 	}
+
+
+	public int doModify(int id, String body) {
+		// TODO Auto-generated method stub
+		return commentRepository.updateComment(id,  body);
+	}
+
+
+	public Comment findCommentById(int id) {
+		// TODO Auto-generated method stub
+		return commentRepository.getCommentById(id);
+	}
+
+
+
 
 
 

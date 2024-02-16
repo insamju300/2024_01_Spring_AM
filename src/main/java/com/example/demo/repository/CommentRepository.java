@@ -80,5 +80,27 @@ public interface CommentRepository {
             "WHERE id = #{id}")
 	public int updateComment(int id, String body);
 
+    
+
+    @Select("""
+    		<script>
+    		   	   SELECT IF(IFNULL(COUNT(id),0) &gt; #{limit}, 1, 0) as hasMoreComment
+    		       FROM Comment 
+    		       WHERE Comment.articleId = #{articleId}
+    		       <choose>
+	    		       <when test="originalParentId == null">
+	    		             AND Comment.originalParentId IS NULL
+	    		       </when>
+	    		       <otherwise>
+	    		             AND Comment.originalParentId = #{originalParentId}
+	    		       </otherwise>
+    		       </choose>
+    		       <if test="currentCommentId != null">
+    		             AND Comment.id &lt; #{currentCommentId}
+    		       </if>
+    		</script>
+    """)
+	public boolean hasMoreComment(int articleId, int limit, Integer currentCommentId, Integer originalParentId);
+
 
 }

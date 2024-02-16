@@ -51,7 +51,7 @@ public class UsrCommentController {
 	
 	
 	@RequestMapping("/usr/comment/list")
-	public List<Comment> showList(HttpServletRequest req,
+	public ResultData<List<Comment>> showList(HttpServletRequest req,
 			int articleId,
 			@RequestParam(required = false) Integer  currentCommentId,
 			@RequestParam(required = false) Integer  originalParentId) {
@@ -60,8 +60,10 @@ public class UsrCommentController {
 		System.err.println("여기까진 잘 왔음" + articleId + "," + Ut.isEmpty(currentCommentId));
 		//일단은 limit 10개만 받아서 그대로 return 하기
 		
-		List<Comment> comments =  commentService.getRecentCommentsWithoutParentId(articleId, limit, currentCommentId, originalParentId, memberId);	
-		return comments;
+		List<Comment> comments =  commentService.getRecentCommentsWithoutParentId(articleId, limit, currentCommentId, originalParentId, memberId);
+		boolean hasMoreComment =  commentService.hasMoreComment(articleId, limit, currentCommentId, originalParentId);
+		
+		return ResultData.from("S-1", "ok", "comments", comments, "hasMoreComment", hasMoreComment);
 	}
 	
 

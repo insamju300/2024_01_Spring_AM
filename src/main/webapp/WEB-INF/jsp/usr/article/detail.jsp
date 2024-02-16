@@ -155,7 +155,7 @@
 const params = {};
 params.id = parseInt('${param.id}');
 let localStorageName = 'isAlreadyHit' + params.id;
-let isFirstToggle = true;
+let isAlradyToggle = [];
 
 function ArticleDetail__doIncreaseHitCount() {
 	$.get('../article/doIncreaseHitCountRd', {
@@ -273,8 +273,8 @@ function loadMoreComment(articleId, currentCommentId) {
 	$.get('../comment/list', {
 		articleId : articleId,
 		currentCommentId : currentCommentId
-	}, function(comments) {
-		$.each(comments, function(index, comment) {
+	}, function(data) {
+		$.each(data.data1, function(index, comment) {
 			appendComment(comment);
 		});
 
@@ -288,23 +288,19 @@ function loadMoreDescendantComment(articleId, currentCommentId, originalParentId
 		articleId : articleId,
 		currentCommentId : currentCommentId,
 		originalParentId: originalParentId
-	}, function(comments) {
-		$.each(comments, function(index, comment) {
+	}, function(data) {
+		$.each(data.data1, function(index, comment) {
 			appendDescendantComment(comment,e);
 		});
 		
-
-		//1. 현재 대댓글 갯수 가져오기. 
-		//2.자식 갯수 가져오기
-		let currentChildCount = $(e).siblings(".descendantComments").find(".descendantComment").length;
-		if(descendantCommentCount>currentChildCount){
+		console.log(data.data2);
+		if(data.data2==true){
 		    const tmp = document.createElement("button");
 		    tmp.setAttribute("data-descendant-comment-count", descendantCommentCount);
 		    
 		    //마지막 자식의 id 가져오기.
 		    let lastChild = $(e).siblings(".descendantComments").find(".descendantComment:last-child");
 		    let lastChildId = lastChild.attr('data-id');
-		    console.log( `${"${currentChildCount}"}, ${"${descendantCommentCount}"},${"${lastChildId}"}`)
 		    
 		    tmp.setAttribute("onclick", `loadMoreDescendantCommentAndRemoveThisButton(${"${articleId}"},${"${lastChildId}"}, ${"${originalParentId}"}, this, ${"${descendantCommentCount}"})`);
 
@@ -404,9 +400,12 @@ function appendDescendantComment(comment,e){
 
 
 function toggleDescendantComment(articleId, currentCommentId, originalParentId, e, descendantCommentCount){
-	if(isFirstToggle){
+    console.log(isAlradyToggle);
+    console.log(isAlradyToggle.includes(originalParentId));
+	if(!isAlradyToggle.includes(originalParentId)){
 	    loadMoreDescendantComment(articleId, currentCommentId, originalParentId, e, descendantCommentCount);
 	    isFirstToggle = false;
+	    isAlradyToggle.push(originalParentId);
 	}
 	
 	$(e).siblings(".descendantComments").toggle();

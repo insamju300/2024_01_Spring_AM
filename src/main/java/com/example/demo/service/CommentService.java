@@ -59,6 +59,12 @@ public class CommentService {
 	}
 
 
+	public boolean hasMoreComment(int articleId, int limit, Integer currentCommentId, Integer originalParentId) {
+		// TODO Auto-generated method stub
+		return commentRepository.hasMoreComment(articleId, limit, currentCommentId, originalParentId);
+	}
+
+
 
 
 

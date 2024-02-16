@@ -335,15 +335,38 @@ function appendDescendantComment(comment,e){
 	            ${"${comment.extra__writer}"}
 	            <time class="text-xs opacity-50"> ${"${comment.regDate}"}</time>
 		        </div>
-		        <div class="chat-bubble ml-5">`;
+		        <div class="chat-bubble ml-5 chat-bubble-view">`;
 	     if(comment.parentId!=comment.originalParentId){
 	    	 tmpInnerHTML += `<p class="text-blue-500"> @${"${comment.extra__parentWriter}"} </p>`;   
 		         
 		 }
 	     
-	     tmpInnerHTML += `${"${comment.body}"}</div>
-	        `;
+	     tmpInnerHTML += `<p class="bubble-content">${"${comment.body}"}</p></div> `;
          if("${rq.isLogined()}"=="true"){   
+        	 
+        	 if(comment.accessible){
+        		 
+        		 tmpInnerHTML += `
+        		 <div class="chat-bubble-form hidden">
+        		     <form name="commentModifyForm">
+        		         <input type="hidden" value=${"${comment.id}"} name="id">
+
+        	                 <div class="flex">
+			        		     <div class="chat-bubble ml-5">`
+            	if(comment.parentId!=comment.originalParentId){
+           		      tmpInnerHTML += `<p class="text-blue-500"> @${"${comment.extra__parentWriter}"} </p>`;   
+           			         
+           		}
+           		   tmpInnerHTML += `<input type="text" name="body" value="${'${comment.body}'}" class="input input-bordered input-sm w-full max-w-xs text-gray-900"/>
+			        		  </div>
+			        		 <button type="button" onclick="doCommentModify(this);" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">전송하기</button>
+		        		 </div>
+	        		 </form>
+        		 </div>
+        		 <button onclick='toggleChatBubble(this)' class="showModifyButton w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">수정</button>
+        		 `;
+        	 }
+        	 
 		     tmpInnerHTML += `
 		    	<button class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200" onclick="showNextDoWriteForm(this)"> 답글달기 </button>
 		        <div class="hidden doWriteForm">
@@ -398,7 +421,7 @@ function doCommentModify(e){
 		body : body
 	}, function(data) {
 		if(data.success==true){
-		    $(e).parents(".chat-bubble-form").siblings(".chat-bubble-view").text(data.data1.body);
+		    $(e).parents(".chat-bubble-form").siblings(".chat-bubble-view").find(".bubble-content").text(data.data1.body);
 		    $(e).parents(".chat-bubble-form").siblings(".chat-bubble-view").show();
 		    $(e).parents(".chat").find(".showModifyButton").text("수정");
 		    $(e).parents(".chat-bubble-form").hide();
@@ -411,9 +434,6 @@ function doCommentModify(e){
 //댓글 화면 그리기
 function appendComment(comment){
 	   const tmp = document.createElement("div");
-	   console.log(comment.accessible)
-	   console.log(!comment.accessible)
-	   console.log(comment.accessible==true)
 	   
 	    tmp.setAttribute("class", "chat chat-start");
 	    tmp.setAttribute("data-id", comment.id);
@@ -423,7 +443,10 @@ function appendComment(comment){
 	            ${"${comment.extra__writer}"}
 	            <time class="text-xs opacity-50"> ${"${comment.regDate}"}</time>
 	        </div>
-	        <div class="chat-bubble ml-5 chat-bubble-view">${"${comment.body}"}</div>
+	        <div class="chat-bubble ml-5 chat-bubble-view">
+	                <p class="bubble-content">${"${comment.body}"}</p>
+	        
+	        </div>
 	        `;
 	      
          
@@ -492,7 +515,7 @@ function appendComment(comment){
 function toggleChatBubble(e){
 	$(e).siblings(".chat-bubble-view").toggle();
 	$(e).siblings(".chat-bubble-form").toggle();
-	$(e).siblings(".chat-bubble-form").find("input[name=body]").val($(e).siblings(".chat-bubble-view").text());
+	$(e).siblings(".chat-bubble-form").find("input[name=body]").val($(e).siblings(".chat-bubble-view").find(".bubble-content").text());
 	if($(e).text()=="수정"){
 	    $(e).text("취소");
 	}else{

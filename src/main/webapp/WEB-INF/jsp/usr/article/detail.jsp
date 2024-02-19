@@ -134,7 +134,7 @@
 
 <section>
 	<c:if test="${rq.isLogined() }">
-		<form class="writeForm";>
+		<form class="doWriteForm";>
 			<input type="hidden" name="articleId" value="${article.id }">
 			<div class="bg-white p-4 rounded shadow">
 				<div class="flex flex-col">
@@ -295,7 +295,7 @@ function loadMoreDescendantComment(articleId, currentCommentId, originalParentId
 		originalParentId: originalParentId
 	}, function(data) {
 		$.each(data.data1, function(index, comment) {
-			appendDescendantComment(comment,e);
+			appendDescendantComment(comment,e, false);
 		});
 		
 		console.log(data.data2);
@@ -322,152 +322,6 @@ function loadMoreDescendantComment(articleId, currentCommentId, originalParentId
 function loadMoreDescendantCommentAndRemoveThisButton(articleId, currentCommentId, originalParentId, e, descendantCommentCount){
 	loadMoreDescendantComment(articleId, currentCommentId, originalParentId, $(e).parent().parent().find(".descendantCommentsButton"), descendantCommentCount);
 	$(e).remove();
-	
-}
-
-//답글 화면 그리기
-function appendDescendantComment(comment,e){
-	   const tmp = document.createElement("div");
-	    tmp.setAttribute("class", "chat chat-start descendantComment");
-	    tmp.setAttribute("data-id", comment.id);
-	    let tmpInnerHTML = `
-	        <div class= "flex flex-col">
-           <div class="chat-header">
-	            ${"${comment.extra__writer}"}
-	            <time class="text-xs opacity-50"> ${"${comment.regDate}"}</time>
-		        </div>
-		        <div class="chat-bubble ml-5 chat-bubble-view">`;
-	     if(comment.parentId!=comment.originalParentId){
-	    	 tmpInnerHTML += `<p class="text-blue-500"> @${"${comment.extra__parentWriter}"} </p>`;   
-		         
-		 }
-	     
-	     tmpInnerHTML += `<p class="bubble-content">${"${comment.body}"}</p></div> `;
-         if("${rq.isLogined()}"=="true"){   
-        	 
-        	 if(comment.accessible){
-        		 
-        		 tmpInnerHTML += `
-        		 <div class="chat-bubble-form hidden">
-        		     <form name="commentModifyForm">
-        		         <input type="hidden" value=${"${comment.id}"} name="id">
-
-        	                 <div class="flex">
-			        		     <div class="chat-bubble ml-5">`
-            	if(comment.parentId!=comment.originalParentId){
-           		      tmpInnerHTML += `<p class="text-blue-500"> @${"${comment.extra__parentWriter}"} </p>`;   
-           			         
-           		}
-           		   tmpInnerHTML += `<input type="text" name="body" value="${'${comment.body}'}" class="input input-bordered input-sm w-full max-w-xs text-gray-900"/>
-			        		  </div>
-			        		 <button type="button" onclick="doCommentModify(this);" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">전송하기</button>
-		        		 </div>
-	        		 </form>
-        		 </div>
-        		 <div class="flex">
-      		       <button onclick='toggleChatBubble(this)' class="showModifyButton w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">수정</button>
-      		       <button onclick='doCommentDelete(this, ${"${comment.id}"})' class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">삭제</button>
-      		     </div>
-        		 `;
-        	 }
-        	 
-		     tmpInnerHTML += `
-		    	<button class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200" onclick="showNextDoWriteForm(this)"> 답글달기 </button>
-		        <div class="hidden doWriteForm">
-					<form action="../comment/doWrite" method="POST">
-						<input type="hidden" name="articleId" value="${article.id }">
-						<input type="hidden" name="originalParentId" value=${"${comment.originalParentId}" }>
-						<input type="hidden" name="parentId" value=${"${comment.id}" }>
-							<div class="bg-white p-4 rounded shadow">
-								<div class="flex flex-col">
-				
-									<h3 class="font-semibold">${rq.loginedMemberNicname }</h3>
-									<input type="text" name="body"
-										class="mt-1 w-96 border-b-2 border-gray-300 border-solid focus:outline-none focus:border-black" />
-									<div class="flex">
-									    <button type="button" onclick="hiddenDoWriteForm(this)" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">취소</button>
-									    <button type="submit" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
-									</div>
-				
-									</div>
-							</div>
-					</form>
-				</div>
-				</div>
-		    `;
-         }
-
-	    
-	    tmp.innerHTML=tmpInnerHTML;
-	    $(e).siblings(".descendantComments").append(tmp);
-	    
-	    
-}
-
-
-
-
-function toggleDescendantComment(articleId, currentCommentId, originalParentId, e, descendantCommentCount){
-    console.log(isAlradyToggle);
-    console.log(isAlradyToggle.includes(originalParentId));
-	if(!isAlradyToggle.includes(originalParentId)){
-	    loadMoreDescendantComment(articleId, currentCommentId, originalParentId, e, descendantCommentCount);
-	    isFirstToggle = false;
-	    isAlradyToggle.push(originalParentId);
-	}
-	
-	$(e).siblings(".descendantComments").toggle();
-}
-
-function doCommentWrite(e){
-	let articleId = $(e).parents(".writeForm").find("input[name=articleId]").val();
-	let body = $(e).parents(".writeForm").find("input[name=body]").val();
-	
-	$.post('../comment/doWrite', {
-		articleId : articleId,
-		body : body
-	}, function(data) {
-		if(data.success==true){
-			appendComment(data.data1, true);
-			alert(data.msg);
-			$(e).parents(".writeForm").find("input[name=body]").val("");
-		}else{
-			alert(data.msg);
-		}
-	}, 'json');
-}
-
-
-function doCommentModify(e){
-	let id = $(e).parents(".chat-bubble-form").find("input[name=id]").val();
-	let body = $(e).parents(".chat-bubble-form").find("input[name=body]").val();
-	
-	$.post('../comment/doModify', {
-		id : id,
-		body : body
-	}, function(data) {
-		if(data.success==true){
-		    $(e).parents(".chat-bubble-form").siblings(".chat-bubble-view").find(".bubble-content").text(data.data1.body);
-		    $(e).parents(".chat-bubble-form").siblings(".chat-bubble-view").show();
-		    $(e).parents(".chat").find(".showModifyButton").text("수정");
-		    $(e).parents(".chat-bubble-form").hide();
-		}else{
-			alert(data.msg);
-		}
-	}, 'json');
-}
-
-function doCommentDelete(e, id){
-	
-	$.post('../comment/doDelete', {
-		id : id
-	}, function(data) {
-		if(data.success==true){
-			$(e).parents(".chat")[0].remove();
-		}else{
-			alert(data.msg);
-		}
-	}, 'json');
 	
 }
 
@@ -515,10 +369,103 @@ function appendComment(comment, isPre){
         	 
 		     tmpInnerHTML += `
 		        <button class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200" onclick="showNextDoWriteForm(this)"> 답글달기 </button>
-		        <div class="hidden doWriteForm">
-					<form action="../comment/doWrite" method="POST">
+		        <div class="hidden doWriteFormContainer">
+					<form class="doWriteForm">
 						<input type="hidden" name="articleId" value="${article.id }">
 						<input type="hidden" name="originalParentId" value=${"${comment.id}" }>
+						<input type="hidden" name="parentId" value=${"${comment.id}" }>
+							<div class="bg-white p-4 rounded shadow">
+								<div class="flex flex-col">
+				
+									<h3 class="font-semibold">${rq.loginedMemberNicname }</h3>
+									<input type="text" name="body"
+										class="mt-1 w-96 border-b-2 border-gray-300 border-solid focus:outline-none focus:border-black" />
+									<div class="flex">
+									    <button type="button" onclick="hiddenDoWriteForm(this)" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">취소</button>
+									    <button type="button" onclick="doCommentWriteForDescendant(this)" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
+									</div>
+				
+									</div>
+							</div>
+					</form>
+				</div>`
+         }
+       if(comment.descendantCommentCount!=0){
+	        tmpInnerHTML += `<button
+	        class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200 descendantCommentsButton"
+	        onclick="toggleDescendantComment(${article.id}, null,${'${comment.id }'},this,${'${comment.descendantCommentCount }'})"> ▼답글 ${"${comment.descendantCommentCount}"}개</button>`;
+	    }
+		tmpInnerHTML += `
+		<div class="appendedDescendantComments  pl-10">
+	    </div>
+		
+		<div class="descendantComments pl-10 hidden">
+	    </div>
+	    </div>
+	    `;
+	    
+	    tmp.innerHTML=tmpInnerHTML;
+
+	    if(!isPre){
+	        document.querySelector("#commentsGroup").append(tmp);
+	    }else{
+	    	document.querySelector("#commentsGroup").prepend(tmp);
+	    }
+	
+}
+
+//답글 화면 그리기
+function appendDescendantComment(comment,e, isPre){
+	   const tmp = document.createElement("div");
+	    tmp.setAttribute("class", "chat chat-start descendantComment");
+	    tmp.setAttribute("data-id", comment.id);
+	    let tmpInnerHTML = `
+	        <div class= "flex flex-col">
+           <div class="chat-header">
+	            ${"${comment.extra__writer}"}
+	            <time class="text-xs opacity-50"> ${"${comment.regDate}"}</time>
+		        </div>
+		        <div class="chat-bubble ml-5 chat-bubble-view">`;
+	     if(comment.parentId!=comment.originalParentId){
+	    	 tmpInnerHTML += `<p class="text-blue-500"> @${"${comment.extra__parentWriter}"} </p>`;   
+		         
+		 }
+	     
+	     tmpInnerHTML += `<p class="bubble-content">${"${comment.body}"}</p></div> `;
+         if("${rq.isLogined()}"=="true"){   
+        	 
+        	 if(comment.accessible){
+        		 
+        		 tmpInnerHTML += `
+        		 <div class="chat-bubble-form hidden">
+        		     <form name="commentModifyForm">
+        		         <input type="hidden" value=${"${comment.id}"} name="id">
+
+        	                 <div class="flex">
+			        		     <div class="chat-bubble ml-5">`
+            	if(comment.parentId!=comment.originalParentId){
+           		      tmpInnerHTML += `<p class="text-blue-500"> @${"${comment.extra__parentWriter}"} </p>`;   
+           			         
+           		}
+           		   tmpInnerHTML += `<input type="text" name="body" value="${'${comment.body}'}" class="input input-bordered input-sm w-full max-w-xs text-gray-900"/>
+			        		  </div>
+			        		 <button type="button" onclick="doCommentModify(this);" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">전송하기</button>
+		        		 </div>
+	        		 </form>
+        		 </div>
+        		 <div class="flex">
+      		       <button onclick='toggleChatBubble(this)' class="showModifyButton w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">수정</button>
+      		       <button onclick='doCommentDelete(this, ${"${comment.id}"})' class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">삭제</button>
+      		     </div>
+        		 `;
+        	 }
+        	 
+		     tmpInnerHTML += `
+		    	<button class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200" onclick="showNextDoWriteForm(this)"> 답글달기 </button>
+		        <div class="hidden doWriteFormContainer">
+					<form action="../comment/doWrite" method="POST">
+						<input type="hidden" name="articleId" value="${article.id }">
+						<input type="hidden" name="originalParentId" value=${"${comment.originalParentId}" }>
 						<input type="hidden" name="parentId" value=${"${comment.id}" }>
 							<div class="bg-white p-4 rounded shadow">
 								<div class="flex flex-col">
@@ -534,28 +481,118 @@ function appendComment(comment, isPre){
 									</div>
 							</div>
 					</form>
-				</div>`
+				</div>
+				</div>
+		    `;
          }
-       if(comment.descendantCommentCount!=0){
-	        tmpInnerHTML += `<button
-	        class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200 descendantCommentsButton"
-	        onclick="toggleDescendantComment(${article.id}, null,${'${comment.id }'},this,${'${comment.descendantCommentCount }'})"> ▼답글 ${"${comment.descendantCommentCount}"}개</button>
-	        <div class="descendantComments pl-10 hidden">
-	        </div>
-	        `;
-	    }
-		tmpInnerHTML += `</div>
-	    `;
+
 	    
 	    tmp.innerHTML=tmpInnerHTML;
-
+	    
 	    if(!isPre){
-	        document.querySelector("#commentsGroup").append(tmp);
+	    	$(e).siblings(".descendantComments").append(tmp);
 	    }else{
-	    	document.querySelector("#commentsGroup").prepend(tmp);
+	    	$(e).siblings(".appendedDescendantComments").prepend(tmp);
 	    }
+	    
+	    
+	    
+}
+
+
+
+
+function toggleDescendantComment(articleId, currentCommentId, originalParentId, e, descendantCommentCount){
+    console.log(isAlradyToggle);
+    console.log(isAlradyToggle.includes(originalParentId));
+	if(!isAlradyToggle.includes(originalParentId)){
+	    loadMoreDescendantComment(articleId, currentCommentId, originalParentId, e, descendantCommentCount);
+	    isFirstToggle = false;
+	    isAlradyToggle.push(originalParentId);
+	}
+	
+	$(e).siblings(".descendantComments").toggle();
+}
+
+
+
+
+
+function doCommentWrite(e){
+	let articleId = $(e).parents(".doWriteForm").find("input[name=articleId]").val();
+	let body = $(e).parents(".doWriteForm").find("input[name=body]").val();
+	
+	$.post('../comment/doWrite', {
+		articleId : articleId,
+		body : body
+	}, function(data) {
+		if(data.success==true){
+			appendComment(data.data1, true);
+			alert(data.msg);
+			$(e).parents(".doWriteForm").find("input[name=body]").val("");
+		}else{
+			alert(data.msg);
+		}
+	}, 'json');
+}
+
+
+function doCommentWriteForDescendant(e){
+	let articleId = $(e).parents(".doWriteForm").find("input[name=articleId]").val();
+	let body = $(e).parents(".doWriteForm").find("input[name=body]").val();
+	let originalParentId = $(e).parents(".doWriteForm").find("input[name=originalParentId]").val();
+	let parentId = $(e).parents(".doWriteForm").find("input[name=parentId]").val();
+	
+	$.post('../comment/doWrite', {
+		articleId : articleId,
+		body : body,
+		originalParentId : originalParentId,
+		parentId : parentId
+	}, function(data) {
+		if(data.success==true){
+			appendDescendantComment(data.data1, $(e).parents(".doWriteFormContainer")[0], true);
+			alert(data.msg);
+			$(e).parents(".doWriteForm").find("input[name=body]").val("");
+		}else{
+			alert(data.msg);
+		}
+	}, 'json');
+}
+
+function doCommentModify(e){
+	let id = $(e).parents(".chat-bubble-form").find("input[name=id]").val();
+	let body = $(e).parents(".chat-bubble-form").find("input[name=body]").val();
+	
+	$.post('../comment/doModify', {
+		id : id,
+		body : body
+	}, function(data) {
+		if(data.success==true){
+		    $(e).parents(".chat-bubble-form").siblings(".chat-bubble-view").find(".bubble-content").text(data.data1.body);
+		    $(e).parents(".chat-bubble-form").siblings(".chat-bubble-view").show();
+		    $(e).parents(".chat").find(".showModifyButton").text("수정");
+		    $(e).parents(".chat-bubble-form").hide();
+		}else{
+			alert(data.msg);
+		}
+	}, 'json');
+}
+
+function doCommentDelete(e, id){
+	
+	$.post('../comment/doDelete', {
+		id : id
+	}, function(data) {
+		if(data.success==true){
+			$(e).parents(".chat")[0].remove();
+		}else{
+			alert(data.msg);
+		}
+	}, 'json');
 	
 }
+
+
 
 
 //수정버튼 눌렀을 때 처리.
@@ -573,13 +610,13 @@ function toggleChatBubble(e){
 
 function showNextDoWriteForm(e){
 
-   $(e).siblings(".doWriteForm").show();
+   $(e).siblings(".doWriteFormContainer").show();
 
 }
 
 function hiddenDoWriteForm(e){
 
-	   $(e).closest('.doWriteForm').hide();
+	   $(e).closest('.doWriteFormContainer').hide();
 
 	}
 

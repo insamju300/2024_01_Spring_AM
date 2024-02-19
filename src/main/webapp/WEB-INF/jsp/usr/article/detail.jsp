@@ -134,7 +134,7 @@
 
 <section>
 	<c:if test="${rq.isLogined() }">
-		<form action="../comment/doWrite" method="POST">
+		<form class="writeForm";>
 			<input type="hidden" name="articleId" value="${article.id }">
 			<div class="bg-white p-4 rounded shadow">
 				<div class="flex flex-col">
@@ -143,7 +143,7 @@
 					<input type="text" name="body"
 						class="mt-1 w-96 border-b-2 border-gray-300 border-solid focus:outline-none focus:border-black" />
 					<div></div>
-					<button class="w-20 mt-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
+					<button type="button" onclick="doCommentWrite(this)" class="w-20 mt-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
 
 				</div>
 			</div>
@@ -151,7 +151,12 @@
 	</c:if>
 	<div id="commentsGroup"></div>
 </section>
+
+
 <script>
+
+
+
 const params = {};
 params.id = parseInt('${param.id}');
 let localStorageName = 'isAlreadyHit' + params.id;
@@ -275,7 +280,7 @@ function loadMoreComment(articleId, currentCommentId) {
 		currentCommentId : currentCommentId
 	}, function(data) {
 		$.each(data.data1, function(index, comment) {
-			appendComment(comment);
+			appendComment(comment, false);
 		});
 
 	
@@ -414,6 +419,25 @@ function toggleDescendantComment(articleId, currentCommentId, originalParentId, 
 	$(e).siblings(".descendantComments").toggle();
 }
 
+function doCommentWrite(e){
+	let articleId = $(e).parents(".writeForm").find("input[name=articleId]").val();
+	let body = $(e).parents(".writeForm").find("input[name=body]").val();
+	
+	$.post('../comment/doWrite', {
+		articleId : articleId,
+		body : body
+	}, function(data) {
+		if(data.success==true){
+			appendComment(data.data1, true);
+			alert(data.msg);
+			$(e).parents(".writeForm").find("input[name=body]").val("");
+		}else{
+			alert(data.msg);
+		}
+	}, 'json');
+}
+
+
 function doCommentModify(e){
 	let id = $(e).parents(".chat-bubble-form").find("input[name=id]").val();
 	let body = $(e).parents(".chat-bubble-form").find("input[name=body]").val();
@@ -448,7 +472,7 @@ function doCommentDelete(e, id){
 }
 
 //댓글 화면 그리기
-function appendComment(comment){
+function appendComment(comment, isPre){
 	   const tmp = document.createElement("div");
 	   
 	    tmp.setAttribute("class", "chat chat-start");
@@ -525,16 +549,20 @@ function appendComment(comment){
 	    
 	    tmp.innerHTML=tmpInnerHTML;
 
-	    document.querySelector("#commentsGroup").append(tmp);
+	    if(!isPre){
+	        document.querySelector("#commentsGroup").append(tmp);
+	    }else{
+	    	document.querySelector("#commentsGroup").prepend(tmp);
+	    }
 	
 }
 
 
 //수정버튼 눌렀을 때 처리.
 function toggleChatBubble(e){
-	$(e).siblings(".chat-bubble-view").toggle();
-	$(e).siblings(".chat-bubble-form").toggle();
-	$(e).siblings(".chat-bubble-form").find("input[name=body]").val($(e).siblings(".chat-bubble-view").find(".bubble-content").text());
+	$(e).parent().siblings(".chat-bubble-view").toggle();
+	$(e).parent().siblings(".chat-bubble-form").toggle();
+	$(e).parent().siblings(".chat-bubble-form").find("input[name=body]").val($(e).parent().siblings(".chat-bubble-view").find(".bubble-content").text());
 	if($(e).text()=="수정"){
 	    $(e).text("취소");
 	}else{

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.service.CommentService;
@@ -24,7 +25,8 @@ public class UsrCommentController {
 	final int limit = 10;
 	
 	@PostMapping("/usr/comment/doWrite")
-	public String doWrite(HttpServletRequest req, String body, int articleId, @RequestParam(required = false) Integer parentId, @RequestParam(required = false)Integer originalParentId) {
+	@ResponseBody
+	public ResultData<Comment> doWrite(HttpServletRequest req, String body, int articleId, @RequestParam(required = false) Integer parentId, @RequestParam(required = false)Integer originalParentId) {
 		
 //	    @Insert("INSERT INTO Comments (memberId, body, regDate, updateDate, articleId, parentId, originalParentId) " +
 //	            "VALUES (#{memberId}, #{body}, NOW(), NOW(), #{articleId}, #{parentId}, #{originalParentId})")
@@ -32,20 +34,30 @@ public class UsrCommentController {
 
 		Rq rq = (Rq) req.getAttribute("rq");
 
-		if (Ut.isNullOrEmpty(body)) {
-			return Ut.jsHistoryBack("F-1", "내용을 입력해 주세요.");
-		}
+//		if (Ut.isNullOrEmpty(body)) {
+//			return Ut.jsHistoryBack("F-1", "내용을 입력해 주세요.");
+//		}
+		
+		System.err.println(articleId+ " : " +  parentId + " : " + originalParentId);
 		
 		int memberId = rq.getLoginedMemberId();
+		
 		Comment comment = new Comment(memberId, body, articleId, parentId, originalParentId);
 
 		ResultData<Integer> writeCommentRd = commentService.writeComent(comment);
+		
+
 
 		int id = (int) writeCommentRd.getData1();
 
 		//todo 1. 없는 article id일 경우 튕겨내기.
 		//todo 2. jsreplace가 아니라 현재 작성한 게시글 돌려주기 or 그냥 ok사인만 돌려주고 프론트에서 list 재요청 받기
-		return Ut.jsReplace(writeCommentRd.getResultCode(), writeCommentRd.getMsg(), "../article/detail?id=" + articleId);
+		
+		Comment createdComment = commentService.findCommentById(id);
+		createdComment.setAccessible(true);
+		
+		return ResultData.from("S-1", String.format("%s번 게시물이이 생성되었습니다.", id), "comment", createdComment);
+		
 
 	}
 	

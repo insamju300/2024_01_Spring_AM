@@ -29,8 +29,8 @@ public class CommentService {
 
 
 	public ResultData<Integer> writeComent(Comment comment) {
-		int id = commentRepository.insertComment(comment);
-		return ResultData.from("S-1", Ut.f("%d번 댓글이 생성되었습니다", id), "id", id);
+		commentRepository.insertComment(comment);
+		return ResultData.from("S-1", Ut.f("%d번 댓글이 생성되었습니다", comment.getId()), "id", comment.getId());
 	}
 
 

@@ -382,7 +382,7 @@ function appendComment(comment, isPre){
 										class="mt-1 w-96 border-b-2 border-gray-300 border-solid focus:outline-none focus:border-black" />
 									<div class="flex">
 									    <button type="button" onclick="hiddenDoWriteForm(this)" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">취소</button>
-									    <button type="button" onclick="doCommentWriteForDescendant(this)" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
+									    <button type="button" onclick="doCommentWriteForDescendantLv1(this)" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
 									</div>
 				
 									</div>
@@ -463,7 +463,7 @@ function appendDescendantComment(comment,e, isPre){
 		     tmpInnerHTML += `
 		    	<button class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200" onclick="showNextDoWriteForm(this)"> 답글달기 </button>
 		        <div class="hidden doWriteFormContainer">
-					<form action="../comment/doWrite" method="POST">
+					<form class="doWriteForm">
 						<input type="hidden" name="articleId" value="${article.id }">
 						<input type="hidden" name="originalParentId" value=${"${comment.originalParentId}" }>
 						<input type="hidden" name="parentId" value=${"${comment.id}" }>
@@ -475,7 +475,7 @@ function appendDescendantComment(comment,e, isPre){
 										class="mt-1 w-96 border-b-2 border-gray-300 border-solid focus:outline-none focus:border-black" />
 									<div class="flex">
 									    <button type="button" onclick="hiddenDoWriteForm(this)" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">취소</button>
-									    <button type="submit" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
+									    <button type="button" onclick="doCommentWriteForDescendantLv2(this)" class="w-20 m-1 hover:shadow hover:bg-gray-600 hover:text-gray-200">댓글 달기</button>
 									</div>
 				
 									</div>
@@ -536,12 +536,29 @@ function doCommentWrite(e){
 	}, 'json');
 }
 
-
-function doCommentWriteForDescendant(e){
+function doCommentWriteForDescendantLv1(e){
 	let articleId = $(e).parents(".doWriteForm").find("input[name=articleId]").val();
 	let body = $(e).parents(".doWriteForm").find("input[name=body]").val();
 	let originalParentId = $(e).parents(".doWriteForm").find("input[name=originalParentId]").val();
 	let parentId = $(e).parents(".doWriteForm").find("input[name=parentId]").val();
+	doCommentWriteForDescendant(e, articleId, body, originalParentId, parentId);
+	
+	$(e).parents(".doWriteForm").find("input[name=body]").val("");
+}
+
+function doCommentWriteForDescendantLv2(e){
+	let articleId = $(e).parents(".doWriteForm").find("input[name=articleId]").val();
+	let body = $(e).parents(".doWriteForm").find("input[name=body]").val();
+	let originalParentId = $(e).parents(".doWriteForm").find("input[name=originalParentId]").val();
+	let parentId = $(e).parents(".doWriteForm").find("input[name=parentId]").val();
+	console.log($(e).parents(".chat").first().parent().attr("class"));
+	doCommentWriteForDescendant($(e).parents(".chat").first().parent().siblings(".doWriteFormContainer").find("button").first(), articleId, body, originalParentId, parentId);
+	
+	$(e).parents(".doWriteForm").find("input[name=body]").val("");
+}
+
+function doCommentWriteForDescendant(e,articleId, body, originalParentId, parentId){
+
 	
 	$.post('../comment/doWrite', {
 		articleId : articleId,
@@ -550,14 +567,17 @@ function doCommentWriteForDescendant(e){
 		parentId : parentId
 	}, function(data) {
 		if(data.success==true){
-			appendDescendantComment(data.data1, $(e).parents(".doWriteFormContainer")[0], true);
+			appendDescendantComment(data.data1, $(e).parents(".doWriteFormContainer").first(), true);
 			alert(data.msg);
-			$(e).parents(".doWriteForm").find("input[name=body]").val("");
+			//$(e).parents(".doWriteForm").find("input[name=body]").val("");
 		}else{
 			alert(data.msg);
 		}
 	}, 'json');
 }
+
+//답글의 답글 작성 로직
+
 
 function doCommentModify(e){
 	let id = $(e).parents(".chat-bubble-form").find("input[name=id]").val();

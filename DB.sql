@@ -211,3 +211,7 @@ CREATE TABLE `Comment` (
     parentId INT UNSIGNED,
     originalParentId INT UNSIGNED
 );
+
+
+INSERT INTO `comment` SET memberId=(CEIL(RAND()*3)), `body` = CONCAT('내용', CEIL(RAND()*1000)), regDate=NOW(), updatedate=NOW(), 
+articleId = (CEIL(RAND()*2));
